@@ -74,7 +74,6 @@ export default function App() {
   const [syncState, setSyncState] = useState<'syncing' | 'synced' | 'offline'>('offline');
   const [showSyncBadge, setShowSyncBadge] = useState<boolean>(true);
   const [reinitCounter, setReinitCounter] = useState<number>(0);
-  const [showDbDrawer, setShowDbDrawer] = useState<boolean>(false);
   const [currentRoute, setCurrentRoute] = useState<string>(window.location.pathname);
   const [deviceMode, setDeviceMode] = useState<'pc' | 'tablet' | 'mobile'>('mobile');
 
@@ -311,10 +310,9 @@ export default function App() {
         </div>
 
         <div className="flex items-center gap-2.5">
-          {/* Sync status badge button */}
-          <button 
-            onClick={() => setShowDbDrawer(true)}
-            className={`py-1.5 px-2.5 sm:px-3 rounded-xl text-[10px] font-semibold border flex items-center gap-1.5 transition-all cursor-pointer shadow-sm ${
+          {/* Sync status badge */}
+          <div 
+            className={`py-1.5 px-2.5 sm:px-3 rounded-xl text-[10px] font-semibold border flex items-center gap-1.5 transition-all shadow-sm ${
               syncState === 'synced' 
                 ? 'bg-emerald-50 border-emerald-100 text-emerald-700' 
                 : syncState === 'syncing' 
@@ -330,16 +328,7 @@ export default function App() {
               {syncState === 'synced' && 'Cloud Active'}
               {syncState === 'offline' && 'Offline / Local'}
             </span>
-          </button>
-
-          {/* Database Settings trigger */}
-          <button 
-            onClick={() => setShowDbDrawer(true)} 
-            className="p-2 bg-white border border-slate-200/80 hover:bg-slate-50 text-slate-650 hover:text-blue-600 rounded-xl transition-all cursor-pointer shadow-sm"
-            title="Database Settings"
-          >
-            <Database className="w-4 h-4" />
-          </button>
+          </div>
 
           {/* Admin Dashboard view */}
           <button 
@@ -682,40 +671,7 @@ export default function App() {
 
           </main>
 
-          {/* Database settings slide-over drawer inside the workspace */}
-          {showDbDrawer && (
-            <div 
-              className="absolute inset-0 bg-slate-950/60 z-50 flex justify-end pointer-events-auto cursor-pointer animate-fadeIn" 
-              onClick={() => setShowDbDrawer(false)}
-            >
-              <div 
-                onClick={(e) => e.stopPropagation()}
-                className="w-full max-w-[360px] h-full bg-white border-l border-slate-200 p-6 overflow-y-auto custom-scrollbar flex flex-col cursor-default"
-              >
-                <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-2">
-                  <h3 className="text-xs font-bold text-slate-900 flex items-center gap-1.5 font-display">
-                    <Database className="w-4 h-4 text-indigo-650 animate-pulse" />
-                    Database Connection Setup
-                  </h3>
-                  <button 
-                    onClick={() => setShowDbDrawer(false)}
-                    className="text-[11px] font-bold text-slate-400 hover:text-slate-600 cursor-pointer"
-                  >
-                    Close
-                  </button>
-                </div>
 
-                <div className="flex-1 overflow-y-auto custom-scrollbar">
-                  <SupabaseSettings 
-                    syncState={syncState} 
-                    onCredentialsChange={() => setReinitCounter(c => c + 1)}
-                    onClose={() => setShowDbDrawer(false)}
-                    isMobileDrawer={true}
-                  />
-                </div>
-              </div>
-            </div>
-          )}
 
         </div>
 
