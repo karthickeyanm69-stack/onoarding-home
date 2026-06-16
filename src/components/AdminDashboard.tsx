@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Trash2, Edit, Check, ArrowLeft, User, Calendar, 
-  AlertCircle, AlertTriangle, Settings, ChevronDown, Users
+  AlertCircle, AlertTriangle, Settings, ChevronDown, Users, RefreshCw
 } from 'lucide-react';
 import { OnboardingData } from '../types';
 import { fetchProfiles, deleteProfile, updateProfile } from '../supabase';
@@ -31,13 +31,21 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
   const [sortField, setSortField] = useState<'id' | 'name' | 'date' | 'step'>('id');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
-  // Interactive Date Range picker states (default covers 30 days)
+  // Interactive Date Range picker states (default covers 30 days, cached in localStorage)
   const [startDate, setStartDate] = useState<string>(() => {
+    try {
+      const saved = localStorage.getItem('ewe_admin_start_date');
+      if (saved) return saved;
+    } catch {}
     const d = new Date();
     d.setDate(d.getDate() - 30);
     return d.toISOString().split('T')[0];
   });
   const [endDate, setEndDate] = useState<string>(() => {
+    try {
+      const saved = localStorage.getItem('ewe_admin_end_date');
+      if (saved) return saved;
+    } catch {}
     return new Date().toISOString().split('T')[0];
   });
 
@@ -57,6 +65,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
     window.addEventListener('click', handleOutsideClick);
     return () => window.removeEventListener('click', handleOutsideClick);
   }, []);
+
+  // Save selected date range to localStorage when changed
+  useEffect(() => {
+    try {
+      localStorage.setItem('ewe_admin_start_date', startDate);
+      localStorage.setItem('ewe_admin_end_date', endDate);
+    } catch (e) {
+      console.error('Error saving date filters to localStorage', e);
+    }
+  }, [startDate, endDate]);
 
   // Stable Mock/Real Data construction helpers
   const getProfileDate = (p: OnboardingData): Date => {
@@ -301,9 +319,19 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
         {/* top header bar */}
         <div className="space-y-4 shrink-0">
           <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-xl font-bold text-slate-900 font-display">Profiles</h2>
-              <p className="text-xs text-slate-400 mt-0.5 font-medium">{totalCount} profiles found</p>
+            <div className="flex items-center gap-3">
+              <div>
+                <h2 className="text-xl font-bold text-slate-900 font-display">Profiles</h2>
+                <p className="text-xs text-slate-400 mt-0.5 font-medium">{totalCount} profiles found</p>
+              </div>
+              <button
+                onClick={loadData}
+                disabled={loading}
+                className="p-2 bg-slate-50 hover:bg-slate-100 border border-slate-200/80 text-slate-650 hover:text-blue-600 rounded-xl transition-all cursor-pointer shadow-sm disabled:opacity-50"
+                title="Refresh profiles"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+              </button>
             </div>
           </div>
 

@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Signal, Wifi, Battery, Lock, Play, ArrowRight, ArrowLeft, 
   Sparkle, Terminal, ExternalLink, RefreshCw, CheckCircle, Database, Shield,
-  Monitor, Tablet, Smartphone
+  Monitor, Tablet, Smartphone, AlertCircle
 } from 'lucide-react';
 import { OnboardingData, OnboardingStepId } from './types';
 import { OnboardingIllustration } from './components/OnboardingIllustration';
@@ -76,10 +76,31 @@ export default function App() {
   const [reinitCounter, setReinitCounter] = useState<number>(0);
   const [currentRoute, setCurrentRoute] = useState<string>(window.location.pathname);
   const [deviceMode, setDeviceMode] = useState<'pc' | 'tablet' | 'mobile'>('mobile');
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState<boolean>(false);
+  const [passwordInput, setPasswordInput] = useState<string>('');
+  const [loginError, setLoginError] = useState<string>('');
+
+  const handleAdminLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    const ADMIN_PASSWORD = (import.meta as any).env?.VITE_ADMIN_PASSWORD || 'admin123';
+    
+    if (passwordInput === ADMIN_PASSWORD) {
+      setIsAdminAuthenticated(true);
+      setLoginError('');
+      setPasswordInput('');
+    } else {
+      setLoginError('Invalid administrator credentials.');
+      setPasswordInput('');
+    }
+  };
 
   useEffect(() => {
     const handlePopState = () => {
-      setCurrentRoute(window.location.pathname);
+      const newRoute = window.location.pathname;
+      setCurrentRoute(newRoute);
+      if (newRoute !== '/admin' && newRoute !== '/admine') {
+        setIsAdminAuthenticated(false);
+      }
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
@@ -88,6 +109,9 @@ export default function App() {
   const navigateTo = (path: string) => {
     window.history.pushState({}, '', path);
     setCurrentRoute(path);
+    if (path !== '/admin' && path !== '/admine') {
+      setIsAdminAuthenticated(false);
+    }
   };
 
   // ==========================================
@@ -279,6 +303,73 @@ export default function App() {
   };
 
   if (currentRoute === '/admin' || currentRoute === '/admine') {
+    if (!isAdminAuthenticated) {
+      return (
+        <div className="min-h-screen bg-slate-50 relative flex flex-col items-center justify-center p-3 sm:p-6 overflow-hidden">
+          {/* BACKGROUND FLOATING ORNAMENTAL BLUR BLOBS */}
+          <div className="absolute top-[-50px] left-[-100px] w-[500px] h-[500px] bg-blue-200/40 rounded-full blur-3xl animate-blob-left pointer-events-none" />
+          <div className="absolute bottom-[-100px] right-[-100px] w-[500px] h-[500px] bg-indigo-200/40 rounded-full blur-3xl animate-blob-right pointer-events-none" />
+          <div className="absolute top-[30%] left-[10%] w-[350px] h-[350px] bg-purple-100/50 rounded-full blur-3xl animate-blob-center pointer-events-none" />
+
+          {/* LOGIN CARD */}
+          <div className="w-full max-w-sm bg-white rounded-[32px] border border-slate-200/80 shadow-2xl p-6 sm:p-8 flex flex-col relative z-10 animate-fadeIn text-left select-none">
+            {/* Logo Brand */}
+            <div className="flex flex-col items-center text-center space-y-4 mb-6">
+              <div className="w-12 h-12 rounded-2xl bg-blue-600 flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                E
+              </div>
+              <div>
+                <h2 className="text-lg font-bold text-slate-900 font-display">Admin Portal Access</h2>
+                <p className="text-xs text-slate-400 mt-1 font-medium">Please enter your password to unlock the dashboard.</p>
+              </div>
+            </div>
+
+            <form onSubmit={handleAdminLogin} className="space-y-4">
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">
+                  Dashboard Password
+                </label>
+                <input
+                  type="password"
+                  value={passwordInput}
+                  onChange={(e) => {
+                    setPasswordInput(e.target.value);
+                    setLoginError('');
+                  }}
+                  placeholder="Enter admin password..."
+                  className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200/80 bg-slate-50/50 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 focus:bg-white transition-all font-medium font-mono text-slate-700 placeholder:text-slate-400"
+                  required
+                />
+              </div>
+
+              {loginError && (
+                <div className="p-3 bg-rose-50 border border-rose-100 rounded-xl text-[10px] text-rose-700 font-semibold flex items-center gap-1.5 shrink-0 animate-fadeIn z-15">
+                  <AlertCircle className="w-3.5 h-3.5 text-rose-650" />
+                  {loginError}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-xs uppercase tracking-wider transition-colors shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                <Lock className="w-3.5 h-3.5" />
+                Unlock Dashboard
+              </button>
+            </form>
+
+            <button
+              onClick={() => navigateTo('/')}
+              className="mt-4 py-2 px-3 border border-slate-200 rounded-xl text-[10px] font-bold text-slate-500 hover:bg-slate-50 transition-all cursor-pointer flex items-center justify-center gap-1 bg-white"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              Back to User App
+            </button>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="min-h-screen bg-slate-50 relative flex flex-col items-center justify-center p-3 sm:p-6 overflow-hidden">
         {/* BACKGROUND FLOATING ORNAMENTAL BLUR BLOBS */}
@@ -329,16 +420,6 @@ export default function App() {
               {syncState === 'offline' && 'Offline / Local'}
             </span>
           </div>
-
-          {/* Admin Dashboard view */}
-          <button 
-            onClick={() => navigateTo('/admin')} 
-            className="py-1.5 px-2.5 sm:px-3 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-[10px] font-bold tracking-wide uppercase flex items-center gap-1 transition-all cursor-pointer shadow-sm"
-            title="Admin Dashboard"
-          >
-            <Shield className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Admin View</span>
-          </button>
         </div>
       </header>
 
