@@ -1,0 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-display: "Space Grotesk", sans-serif;
+}
+
+/* Custom styles for high-end scrollbars inside the phone preview */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.4);
+  border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.6);
+}
+
+/* Float animations for background blobs */
+@keyframes blob-float-left {
+  0% { transform: translate(0px, 0px) scale(1); }
+  33% { transform: translate(-20px, 15px) scale(1.05); }
+  66% { transform: translate(30px, -20px) scale(0.95); }
+  100% { transform: translate(0px, 0px) scale(1); }
+}
+
+@keyframes blob-float-right {
+  0% { transform: translate(0px, 0px) scale(1); }
+  33% { transform: translate(25px, -15px) scale(0.98); }
+  66% { transform: translate(-15px, 20px) scale(1.03); }
+  100% { transform: translate(0px, 0px) scale(1); }
+}
+
+@keyframes blob-float-center {
+  0% { transform: translate(0px, 0px) scale(1); }
+  50% { transform: translate(15px, 25px) scale(1.04); }
+  100% { transform: translate(0px, 0px) scale(1); }
+}
+
+.animate-blob-left {
+  animation: blob-float-left 14s ease-in-out infinite;
+}
+
+.animate-blob-right {
+  animation: blob-float-right 16s ease-in-out infinite;
+}
+
+.animate-blob-center {
+  animation: blob-float-center 10s ease-in-out infinite;
+}
+

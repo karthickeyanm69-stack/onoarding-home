@@ -1,0 +1,10 @@
+{
+  "name": "EVE Onboarding Flow",
+  "description": "A premium, interactive mobile-optimized onboarding wizard modeling the EVE system with step-by-step profile generation and local and cloud sync.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
