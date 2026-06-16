@@ -106,7 +106,8 @@ export async function syncProfileToCloud(data: OnboardingData, currentStep: numb
       throw error;
     }
     
-    return inserted?.id || '';
+    const record = Array.isArray(inserted) ? inserted[0] : inserted;
+    return record?.id || '';
   }
 }
 
@@ -148,7 +149,9 @@ export async function fetchProfiles(): Promise<OnboardingData[]> {
     profileImg: row.profile_img || '',
     avatarType: row.avatar_type || 'preset',
     presetAvatarId: row.preset_avatar_id || '',
-    createdAt: row.created_at
+    createdAt: row.created_at,
+    step: row.step,
+    completed: row.completed
   }));
 }
 

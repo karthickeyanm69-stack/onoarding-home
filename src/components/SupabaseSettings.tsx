@@ -131,7 +131,7 @@ CREATE OR REPLACE TRIGGER on_profile_update
               Supabase Anon/Public API Key
             </label>
             <input
-              type="text"
+              type="password"
               placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
               value={anonKey}
               onChange={(e) => setAnonKey(e.target.value)}
@@ -256,7 +256,7 @@ CREATE OR REPLACE TRIGGER on_profile_update
               Supabase Anon/Public API Key
             </label>
             <input
-              type="text"
+              type="password"
               placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
               value={anonKey}
               onChange={(e) => setAnonKey(e.target.value)}

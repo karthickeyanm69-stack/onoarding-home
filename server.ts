@@ -13,7 +13,7 @@ app.use(express.json({ limit: '10mb' }));
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'content-type, apikey, authorization, prefer');
+  res.setHeader('Access-Control-Allow-Headers', 'content-type, apikey, authorization, prefer, accept');
   if (req.method === 'OPTIONS') {
     return res.sendStatus(200);
   }
@@ -60,6 +60,10 @@ app.get('/rest/v1/profiles', (req, res) => {
   if (filterId && filterId.startsWith('eq.')) {
     const targetId = filterId.substring(3);
     const matched = db.find((item: any) => item.id === targetId);
+    const accept = req.headers['accept'] || '';
+    if (accept.includes('vnd.pgrst.object')) {
+      return matched ? res.json(matched) : res.status(404).json({ error: 'Profile not found' });
+    }
     return res.json(matched ? [matched] : []);
   }
 
@@ -89,7 +93,11 @@ app.post('/rest/v1/profiles', (req, res) => {
 
   // Return the representation if preferred
   const prefer = req.headers['prefer'] || '';
+  const accept = req.headers['accept'] || '';
   if (prefer.includes('return=representation')) {
+    if (accept.includes('vnd.pgrst.object')) {
+      return res.json(newRecord);
+    }
     return res.json([newRecord]);
   }
 

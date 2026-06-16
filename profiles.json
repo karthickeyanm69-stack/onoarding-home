@@ -1,0 +1,54 @@
+[
+  {
+    "id": "97ffd488-1e2d-4f00-a448-ef4e661adc43",
+    "full_name": "Test User",
+    "preferred_name": "Test",
+    "gender": "male",
+    "age_group": "18-24",
+    "country": "India",
+    "state": "Tamil Nadu",
+    "city": "Chennai",
+    "education_level": "undergraduate",
+    "occupation": "developer",
+    "languages": [
+      "English"
+    ],
+    "email": "test@example.com",
+    "email_verified": true,
+    "mobile": "1234567890",
+    "mobile_verified": true,
+    "profile_img": "preset_1",
+    "avatar_type": "preset",
+    "preset_avatar_id": "preset_1",
+    "step": 10,
+    "completed": true,
+    "created_at": "2026-06-16T19:31:35.557Z",
+    "updated_at": "2026-06-16T19:31:35.557Z"
+  },
+  {
+    "id": "1f4fa44e-5b49-4f93-9a92-9efb5036e07b",
+    "full_name": "Test User",
+    "preferred_name": "Test",
+    "gender": "male",
+    "age_group": "18-24",
+    "country": "India",
+    "state": "Tamil Nadu",
+    "city": "Chennai",
+    "education_level": "undergraduate",
+    "occupation": "developer",
+    "languages": [
+      "English"
+    ],
+    "email": "test@example.com",
+    "email_verified": true,
+    "mobile": "1234567890",
+    "mobile_verified": true,
+    "profile_img": "preset_1",
+    "avatar_type": "preset",
+    "preset_avatar_id": "preset_1",
+    "step": 10,
+    "completed": true,
+    "created_at": "2026-06-16T19:34:11.107Z",
+    "updated_at": "2026-06-16T19:34:11.108Z"
+  }
+]

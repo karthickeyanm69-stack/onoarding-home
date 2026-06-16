@@ -222,20 +222,6 @@ export default function App() {
     }
   };
 
-  const handleSkip = () => {
-    setErrors([]);
-    // Step 4 allow skip
-    if (step === 4) {
-      setData(prev => ({ ...prev, country: '', state: '', city: '' }));
-      if (hasFastReviewPath) {
-        setStep(10);
-        setHasFastReviewPath(false);
-      } else {
-        setStep(5);
-      }
-    }
-  };
-
   const handleJumpToReview = () => {
     setErrors([]);
     setStep(10);
@@ -640,29 +626,17 @@ export default function App() {
 
                 <div className="flex items-center justify-between gap-2">
                   
-                  {/* LEFT BUTTON: BACK or SKIP */}
-                  {step === 4 ? (
-                    <button
-                      type="button"
-                      onClick={handleSkip}
-                      className={`border border-slate-200 hover:bg-slate-100 rounded-lg font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1 cursor-pointer transition-colors shadow-sm bg-white ${
-                        deviceMode === 'mobile' ? 'py-1.5 px-2.5 text-[11px]' : 'py-1.5 px-3.5 sm:py-2 sm:px-4 text-xs'
-                      }`}
-                    >
-                      Skip
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={handleBack}
-                      className={`border border-slate-200 hover:bg-slate-100 rounded-lg font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1 cursor-pointer transition-colors shadow-sm bg-white ${
-                        deviceMode === 'mobile' ? 'py-1.5 px-2.5 text-[11px]' : 'py-1.5 px-3.5 sm:py-2 sm:px-4 text-xs'
-                      }`}
-                    >
-                      <ArrowLeft className="w-3.5 h-3.5" />
-                      Back
-                    </button>
-                  )}
+                  {/* LEFT BUTTON: BACK */}
+                  <button
+                    type="button"
+                    onClick={handleBack}
+                    className={`border border-slate-200 hover:bg-slate-100 rounded-lg font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1 cursor-pointer transition-colors shadow-sm bg-white ${
+                      deviceMode === 'mobile' ? 'py-1.5 px-2.5 text-[11px]' : 'py-1.5 px-3.5 sm:py-2 sm:px-4 text-xs'
+                    }`}
+                  >
+                    <ArrowLeft className="w-3.5 h-3.5" />
+                    Back
+                  </button>
 
                   {/* CENTERING DOCK CAPSULES */}
                   <div className="flex items-center gap-1">
