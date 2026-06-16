@@ -2,8 +2,8 @@ import { createClient } from '@supabase/supabase-js';
 import { OnboardingData } from './types';
 
 // Let's look up environment variables or custom-saved options
-const defaultUrl = (import.meta as any).env?.VITE_SUPABASE_URL || '';
-const defaultKey = (import.meta as any).env?.VITE_SUPABASE_ANON_KEY || '';
+const defaultUrl = (import.meta as any).env?.VITE_SUPABASE_URL || 'http://localhost:3002';
+const defaultKey = (import.meta as any).env?.VITE_SUPABASE_ANON_KEY || 'local-mock-key';
 
 // Save / Load custom credentials via client-side configuration
 export function getStoredSupabaseCredentials() {

@@ -5,9 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite --port=3000 --host=0.0.0.0",
+    "server": "tsx server.ts",
+    "dev:all": "node start.js",
     "build": "vite build",
     "preview": "vite preview",
-    "clean": "rm -rf dist server.js",
+    "clean": "rm -rf dist server.js profiles.json",
     "lint": "tsc --noEmit"
   },
   "dependencies": {
