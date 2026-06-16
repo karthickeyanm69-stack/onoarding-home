@@ -2,35 +2,15 @@ import { createClient } from '@supabase/supabase-js';
 import { OnboardingData } from './types';
 
 // Let's look up environment variables or custom-saved options
-const defaultUrl = (import.meta as any).env?.VITE_SUPABASE_URL || 'http://localhost:3002';
-const defaultKey = (import.meta as any).env?.VITE_SUPABASE_ANON_KEY || 'local-mock-key';
+const defaultUrl = (import.meta as any).env?.VITE_SUPABASE_URL || 'https://jhvjbizzwaykqhpnblmv.supabase.co';
+const defaultKey = (import.meta as any).env?.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpodmpiaXp6d2F5a3FocG5ibG12Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2MjAxMTUsImV4cCI6MjA5NzE5NjExNX0.fxBaGpjtvrPLJPFnP0aEfP1oUhxbCbpQKKF5fhBd2jI';
 
 // Save / Load custom credentials via client-side configuration
 export function getStoredSupabaseCredentials() {
-  try {
-    let url = localStorage.getItem('ewe_supabase_url');
-    let key = localStorage.getItem('ewe_supabase_key');
-
-    // If we are on a production/deployed site (not localhost/127.0.0.1),
-    // ignore any localhost values saved in localStorage and fall back to the env default.
-    const isLocalhost = 
-      typeof window !== 'undefined' && 
-      (window.location.hostname === 'localhost' || 
-       window.location.hostname === '127.0.0.1' || 
-       window.location.hostname === '');
-
-    if (url && url.includes('localhost') && !isLocalhost) {
-      url = null;
-      key = null;
-    }
-
-    return { 
-      url: url || defaultUrl, 
-      key: key || defaultKey 
-    };
-  } catch {
-    return { url: defaultUrl, key: defaultKey };
-  }
+  return { 
+    url: defaultUrl, 
+    key: defaultKey 
+  };
 }
 
 export function saveSupabaseCredentials(url: string, key: string) {

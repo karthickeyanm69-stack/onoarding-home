@@ -119,10 +119,10 @@ CREATE OR REPLACE TRIGGER on_profile_update
             </label>
             <input
               type="url"
+              disabled
               placeholder="https://your-project.supabase.co"
               value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              className="w-full px-3 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 bg-slate-50/50"
+              className="w-full px-3 py-1.5 text-xs rounded-lg border border-slate-200 bg-slate-50/50 opacity-70 cursor-not-allowed"
             />
           </div>
 
@@ -132,37 +132,15 @@ CREATE OR REPLACE TRIGGER on_profile_update
             </label>
             <input
               type="password"
+              disabled
               placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
               value={anonKey}
-              onChange={(e) => setAnonKey(e.target.value)}
-              className="w-full px-3 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 font-mono bg-slate-50/50"
+              className="w-full px-3 py-1.5 text-xs rounded-lg border border-slate-200 font-mono bg-slate-50/50 opacity-70 cursor-not-allowed"
             />
           </div>
 
-          {successMsg && (
-            <p className="text-[11px] text-indigo-600 font-medium flex items-center gap-1">
-              <CheckCircle className="w-3 h-3 text-emerald-500" />
-              {successMsg}
-            </p>
-          )}
-
-          <div className="flex gap-2 justify-end pt-1">
-            {(url || anonKey) && (
-              <button
-                type="button"
-                onClick={handleClear}
-                className="px-2.5 py-1 text-[11px] font-medium text-rose-600 hover:bg-rose-50 rounded-lg transition-colors border border-transparent cursor-pointer"
-              >
-                Clear
-              </button>
-            )}
-            <button
-              type="submit"
-              disabled={!url || !anonKey}
-              className="px-3 py-1 text-[11px] font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors disabled:opacity-50 cursor-pointer"
-            >
-              Apply Connection
-            </button>
+          <div className="text-[10px] text-indigo-600 font-semibold text-right italic select-none mt-1">
+            ✓ Database connection managed automatically
           </div>
 
           <div className="bg-slate-50 rounded-xl p-2.5 border border-slate-200/60 text-[10px] text-slate-600 space-y-1.5 mt-3">
@@ -244,10 +222,10 @@ CREATE OR REPLACE TRIGGER on_profile_update
             </label>
             <input
               type="url"
+              disabled
               placeholder="https://your-project.supabase.co"
               value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              className="w-full px-3 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 bg-slate-50/50"
+              className="w-full px-3 py-1.5 text-xs rounded-lg border border-slate-200 bg-slate-50/50 opacity-70 cursor-not-allowed"
             />
           </div>
 
@@ -257,37 +235,15 @@ CREATE OR REPLACE TRIGGER on_profile_update
             </label>
             <input
               type="password"
+              disabled
               placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
               value={anonKey}
-              onChange={(e) => setAnonKey(e.target.value)}
-              className="w-full px-3 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 font-mono bg-slate-50/50"
+              className="w-full px-3 py-1.5 text-xs rounded-lg border border-slate-200 font-mono bg-slate-50/50 opacity-70 cursor-not-allowed"
             />
           </div>
 
-          {successMsg && (
-            <p className="text-xs text-indigo-600 font-medium flex items-center gap-1">
-              <CheckCircle className="w-3 h-3" />
-              {successMsg}
-            </p>
-          )}
-
-          <div className="flex gap-2 justify-end pt-2">
-            {(url || anonKey) && (
-              <button
-                type="button"
-                onClick={handleClear}
-                className="px-3 py-1.5 text-xs font-medium text-rose-600 hover:bg-rose-50 rounded-lg transition-colors border border-transparent"
-              >
-                Clear
-              </button>
-            )}
-            <button
-              type="submit"
-              disabled={!url || !anonKey}
-              className="px-3 py-1.5 text-xs font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors disabled:opacity-50"
-            >
-              Apply Connection
-            </button>
+          <div className="text-[11px] text-indigo-600 font-semibold text-right italic select-none mt-1">
+            ✓ Database connection managed automatically
           </div>
 
           <div className="bg-slate-50 rounded-xl p-3 border border-slate-200/60 text-[11px] text-slate-600 space-y-2 mt-4">
