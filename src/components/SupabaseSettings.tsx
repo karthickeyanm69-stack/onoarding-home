@@ -86,6 +86,9 @@ CREATE POLICY "Allow public insert" ON public.profiles FOR INSERT WITH CHECK (tr
 -- Anonymous Update Policy
 CREATE POLICY "Allow public update by ID" ON public.profiles FOR UPDATE USING (true) WITH CHECK (true);
 
+-- Anonymous Delete Policy
+CREATE POLICY "Allow public delete by ID" ON public.profiles FOR DELETE USING (true);
+
 -- Trigger for updated_at tracking
 CREATE OR REPLACE FUNCTION public.handle_updated_at()
 RETURNS TRIGGER AS $$

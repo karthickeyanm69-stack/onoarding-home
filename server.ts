@@ -12,7 +12,7 @@ app.use(express.json({ limit: '10mb' }));
 // CORS configuration to intercept cross-origin calls from Vite (port 3001)
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'content-type, apikey, authorization, prefer');
   if (req.method === 'OPTIONS') {
     return res.sendStatus(200);
@@ -126,6 +126,28 @@ app.patch('/rest/v1/profiles', (req, res) => {
   console.log(`[Mock Server] Updated record with ID: ${targetId}`);
 
   res.json(updatedRecord);
+});
+
+// DELETE profiles (deletes profile by id filter)
+app.delete('/rest/v1/profiles', (req, res) => {
+  const db = readDatabase();
+  const filterId = req.query.id as string;
+
+  if (!filterId || !filterId.startsWith('eq.')) {
+    return res.status(400).json({ error: 'Filtering by specific ID (id=eq.UUID) is required for delete' });
+  }
+
+  const targetId = filterId.substring(3);
+  const filtered = db.filter((item: any) => item.id !== targetId);
+
+  if (db.length === filtered.length) {
+    return res.status(404).json({ error: 'Profile not found' });
+  }
+
+  writeDatabase(filtered);
+  console.log(`[Mock Server] Deleted record with ID: ${targetId}`);
+
+  res.json({ message: 'Deleted successfully', id: targetId });
 });
 
 app.listen(PORT, () => {

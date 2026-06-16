@@ -109,3 +109,113 @@ export async function syncProfileToCloud(data: OnboardingData, currentStep: numb
     return inserted?.id || '';
   }
 }
+
+/**
+ * Fetch all onboarding profiles from database.
+ */
+export async function fetchProfiles(): Promise<OnboardingData[]> {
+  const supabase = getSupabaseClient();
+  if (!supabase) {
+    throw new Error('Supabase not configured');
+  }
+
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .order('updated_at', { ascending: false });
+
+  if (error) {
+    console.error('Supabase select failure:', error);
+    throw error;
+  }
+
+  return (data || []).map((row: any) => ({
+    id: row.id,
+    fullName: row.full_name || '',
+    preferredName: row.preferred_name || '',
+    gender: row.gender || '',
+    ageGroup: row.age_group || '',
+    country: row.country || '',
+    state: row.state || '',
+    city: row.city || '',
+    educationLevel: row.education_level || '',
+    occupation: row.occupation || '',
+    languages: row.languages || [],
+    email: row.email || '',
+    emailVerified: row.email_verified || false,
+    mobile: row.mobile || '',
+    mobileVerified: row.mobile_verified || false,
+    profileImg: row.profile_img || '',
+    avatarType: row.avatar_type || 'preset',
+    presetAvatarId: row.preset_avatar_id || '',
+    createdAt: row.created_at
+  }));
+}
+
+/**
+ * Delete a profile by ID.
+ */
+export async function deleteProfile(id: string): Promise<void> {
+  const supabase = getSupabaseClient();
+  if (!supabase) {
+    throw new Error('Supabase not configured');
+  }
+
+  const { error } = await supabase
+    .from('profiles')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error('Supabase delete failure:', error);
+    throw error;
+  }
+}
+
+/**
+ * Update any profile fields.
+ */
+export async function updateProfile(
+  id: string,
+  updates: Partial<OnboardingData>,
+  currentStep: number,
+  isCompleted: boolean
+): Promise<void> {
+  const supabase = getSupabaseClient();
+  if (!supabase) {
+    throw new Error('Supabase not configured');
+  }
+
+  const payload: any = {};
+  if (updates.fullName !== undefined) payload.full_name = updates.fullName;
+  if (updates.preferredName !== undefined) payload.preferred_name = updates.preferredName;
+  if (updates.gender !== undefined) payload.gender = updates.gender;
+  if (updates.ageGroup !== undefined) payload.age_group = updates.ageGroup;
+  if (updates.country !== undefined) payload.country = updates.country;
+  if (updates.state !== undefined) payload.state = updates.state;
+  if (updates.city !== undefined) payload.city = updates.city;
+  if (updates.educationLevel !== undefined) payload.education_level = updates.educationLevel;
+  if (updates.occupation !== undefined) payload.occupation = updates.occupation;
+  if (updates.languages !== undefined) payload.languages = updates.languages;
+  if (updates.email !== undefined) payload.email = updates.email;
+  if (updates.emailVerified !== undefined) payload.email_verified = updates.emailVerified;
+  if (updates.mobile !== undefined) payload.mobile = updates.mobile;
+  if (updates.mobileVerified !== undefined) payload.mobile_verified = updates.mobileVerified;
+  if (updates.profileImg !== undefined) payload.profile_img = updates.profileImg;
+  if (updates.avatarType !== undefined) payload.avatar_type = updates.avatarType;
+  if (updates.presetAvatarId !== undefined) payload.preset_avatar_id = updates.presetAvatarId;
+
+  payload.step = currentStep;
+  payload.completed = isCompleted;
+  payload.updated_at = new Date().toISOString();
+
+  const { error } = await supabase
+    .from('profiles')
+    .update(payload)
+    .eq('id', id);
+
+  if (error) {
+    console.error('Supabase update failure:', error);
+    throw error;
+  }
+}

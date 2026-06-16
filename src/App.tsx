@@ -2,13 +2,15 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Signal, Wifi, Battery, Lock, Play, ArrowRight, ArrowLeft, 
-  Sparkle, Terminal, ExternalLink, RefreshCw, CheckCircle, Database 
+  Sparkle, Terminal, ExternalLink, RefreshCw, CheckCircle, Database, Shield,
+  Monitor, Tablet, Smartphone
 } from 'lucide-react';
 import { OnboardingData, OnboardingStepId } from './types';
 import { OnboardingIllustration } from './components/OnboardingIllustration';
 import { OnboardingStepRenderer } from './components/OnboardingStepRenderer';
 import { OnboardingFinalReview } from './components/OnboardingFinalReview';
 import { SupabaseSettings } from './components/SupabaseSettings';
+import { AdminDashboard } from './components/AdminDashboard';
 
 const initialData: OnboardingData = {
   fullName: '',
@@ -73,6 +75,21 @@ export default function App() {
   const [showSyncBadge, setShowSyncBadge] = useState<boolean>(true);
   const [reinitCounter, setReinitCounter] = useState<number>(0);
   const [showDbDrawer, setShowDbDrawer] = useState<boolean>(false);
+  const [currentRoute, setCurrentRoute] = useState<string>(window.location.pathname);
+  const [deviceMode, setDeviceMode] = useState<'pc' | 'tablet' | 'mobile'>('mobile');
+
+  useEffect(() => {
+    const handlePopState = () => {
+      setCurrentRoute(window.location.pathname);
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  const navigateTo = (path: string) => {
+    window.history.pushState({}, '', path);
+    setCurrentRoute(path);
+  };
 
   // ==========================================
   // SYNC ACTION WITH 1S DEBOUNCE
@@ -276,57 +293,198 @@ export default function App() {
     setTimeout(() => setCopiedState(false), 2000);
   };
 
+  if (currentRoute === '/admin' || currentRoute === '/admine') {
+    return (
+      <div className="min-h-screen bg-slate-50 relative flex flex-col items-center justify-center p-3 sm:p-6 overflow-hidden">
+        {/* BACKGROUND FLOATING ORNAMENTAL BLUR BLOBS */}
+        <div className="absolute top-[-50px] left-[-100px] w-[500px] h-[500px] bg-blue-200/40 rounded-full blur-3xl animate-blob-left pointer-events-none" />
+        <div className="absolute bottom-[-100px] right-[-100px] w-[500px] h-[500px] bg-indigo-200/40 rounded-full blur-3xl animate-blob-right pointer-events-none" />
+        <div className="absolute top-[30%] left-[10%] w-[350px] h-[350px] bg-purple-100/50 rounded-full blur-3xl animate-blob-center pointer-events-none" />
+
+        <AdminDashboard 
+          onBackToOnboarding={() => navigateTo('/')} 
+          syncState={syncState} 
+        />
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-slate-50 relative flex flex-col items-center justify-center p-3 sm:p-6 overflow-hidden">
+    <div className="h-screen w-screen bg-slate-50 flex flex-col overflow-hidden font-sans select-none animate-fadeIn">
       
-      {/* BACKGROUND FLOATING ORNAMENTAL BLUR BLOBS */}
-      <div className="absolute top-[-50px] left-[-100px] w-[500px] h-[500px] bg-blue-200/40 rounded-full blur-3xl animate-blob-left pointer-events-none" />
-      <div className="absolute bottom-[-100px] right-[-100px] w-[500px] h-[500px] bg-indigo-200/40 rounded-full blur-3xl animate-blob-right pointer-events-none" />
-      <div className="absolute top-[30%] left-[10%] w-[350px] h-[350px] bg-purple-100/50 rounded-full blur-3xl animate-blob-center pointer-events-none" />
+      {/* 1. TOP UTILITY HEADER BAR */}
+      <header className="h-16 bg-white border-b border-slate-200/80 px-4 md:px-6 flex items-center justify-between z-30 shrink-0 shadow-sm">
+        <div className="flex items-center gap-3 select-none">
+          <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold font-display shadow-md">
+            E
+          </div>
+          <div>
+            <h1 className="text-sm font-bold text-slate-900 tracking-tight leading-none">EVE Onboarding</h1>
+            <span className="hidden sm:block text-[9px] text-slate-400 font-semibold uppercase tracking-wider mt-0.5">Interactive Wizard Setup</span>
+          </div>
+        </div>
 
-      {/* CORE WORKSPACE INNER CONTENT */}
-      <div className="relative z-20 flex justify-center py-2">
+        <div className="flex items-center gap-2.5">
+          {/* Sync status badge button */}
+          <button 
+            onClick={() => setShowDbDrawer(true)}
+            className={`py-1.5 px-2.5 sm:px-3 rounded-xl text-[10px] font-semibold border flex items-center gap-1.5 transition-all cursor-pointer shadow-sm ${
+              syncState === 'synced' 
+                ? 'bg-emerald-50 border-emerald-100 text-emerald-700' 
+                : syncState === 'syncing' 
+                ? 'bg-blue-50 border-blue-100 text-blue-700' 
+                : 'bg-amber-50 border-amber-100 text-amber-700'
+            }`}
+          >
+            {syncState === 'syncing' && <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-ping" />}
+            {syncState === 'synced' && <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />}
+            {syncState === 'offline' && <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />}
+            <span className="hidden sm:inline">
+              {syncState === 'syncing' && 'Syncing...'}
+              {syncState === 'synced' && 'Cloud Active'}
+              {syncState === 'offline' && 'Offline / Local'}
+            </span>
+          </button>
+
+          {/* Database Settings trigger */}
+          <button 
+            onClick={() => setShowDbDrawer(true)} 
+            className="p-2 bg-white border border-slate-200/80 hover:bg-slate-50 text-slate-650 hover:text-blue-600 rounded-xl transition-all cursor-pointer shadow-sm"
+            title="Database Settings"
+          >
+            <Database className="w-4 h-4" />
+          </button>
+
+          {/* Admin Dashboard view */}
+          <button 
+            onClick={() => navigateTo('/admin')} 
+            className="py-1.5 px-2.5 sm:px-3 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-[10px] font-bold tracking-wide uppercase flex items-center gap-1 transition-all cursor-pointer shadow-sm"
+            title="Admin Dashboard"
+          >
+            <Shield className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Admin View</span>
+          </button>
+        </div>
+      </header>
+
+      {/* 2. SPLIT WORKSPACE FILLING REST OF SCREEN */}
+      <div className="flex-1 bg-slate-100/60 flex items-center justify-center overflow-hidden relative p-4">
         
-        <div className="w-full max-w-[360px] h-[730px] relative pointer-events-auto">
+        {/* Simulated mobile phone preview chassis (matches uploaded frame) */}
+        <div className="w-full h-full sm:w-[375px] sm:h-[740px] sm:max-h-[96%] rounded-none sm:rounded-[48px] border-0 sm:border-[14px] border-slate-955 bg-white shadow-none sm:shadow-2xl flex flex-col overflow-hidden relative transition-all duration-300">
           
-          {/* REALISTIC PHONE SHELL DECORATORS */}
-          <div className="absolute inset-0 bg-slate-950 rounded-[44px] -m-[10px] shadow-2xl border-4 border-slate-800/20 pointer-events-none" />
-          
-          {/* CORE DEVICE FRAME */}
-          <div className="w-full h-full bg-white rounded-[40px] border-[8px] border-slate-950 flex flex-col justify-between overflow-hidden relative shadow-inner">
-            
-            {/* TOP SPEAKER NOTCH AREA */}
-            <div className="absolute top-0 inset-x-0 flex justify-center z-50 pointer-events-none select-none">
-              <div className="w-28 h-4 bg-slate-950 rounded-b-xl flex items-center justify-center relative">
-                {/* Speaker Slot */}
-                <div className="w-8 h-1 bg-slate-800 rounded-full" />
-                {/* Small Camera Dot */}
-                <div className="w-1.5 h-1.5 bg-slate-900 rounded-full absolute right-5" />
+          {/* Speaker Notch Bezel (visible on desktop frame) */}
+          <div className="hidden sm:flex absolute top-0 left-1/2 -translate-x-1/2 w-32 h-4.5 bg-slate-950 rounded-b-2xl z-50 items-center justify-center">
+            {/* Speaker line */}
+            <div className="w-10 h-0.5 bg-slate-800 rounded-full" />
+          </div>
+
+          {/* Smartphone Status Bar (visible on desktop frame) */}
+          <header className="hidden sm:flex h-10 px-6 pt-3 select-none items-center justify-between text-[10px] font-bold text-slate-800 shrink-0 z-40 bg-white">
+            <span className="font-semibold tracking-tight">11:30</span>
+            <div className="flex items-center gap-1.5 text-slate-700">
+              <Signal className="w-3.5 h-3.5" />
+              <Wifi className="w-3.5 h-3.5" />
+              <Battery className="w-4 h-4" />
+            </div>
+          </header>
+
+          {/* Floating sync status badge (matches user image layout) */}
+          {!completed && step >= 2 && (
+            <div className="absolute bottom-18 right-5 z-40 select-none">
+              <div className="py-1 px-2.5 rounded-full bg-slate-900 text-[9px] font-mono font-bold text-white shadow-lg border border-slate-800 flex items-center gap-1.5">
+                <span className={`w-1.5 h-1.5 rounded-full ${
+                  syncState === 'synced' 
+                    ? 'bg-emerald-500' 
+                    : syncState === 'syncing' 
+                    ? 'bg-blue-400 animate-pulse' 
+                    : 'bg-amber-400'
+                }`} />
+                <span>
+                  {syncState === 'syncing' && 'Saving Changes'}
+                  {syncState === 'synced' && 'Cloud Active'}
+                  {syncState === 'offline' && 'Saved Locally (Offline)'}
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* LEFT PANEL: VERTICAL STEPS (Hidden by default in mobile viewport chassis) */}
+          <aside className="hidden bg-gradient-to-b from-blue-600 to-indigo-800 p-6 flex-col justify-between text-white relative overflow-hidden select-none border-r border-slate-200/20">
+            <div className="absolute top-[-40px] left-[-40px] w-[130px] h-[130px] bg-white/10 rounded-full blur-xl pointer-events-none" />
+            <div className="absolute bottom-[-40px] right-[-40px] w-[130px] h-[130px] bg-white/10 rounded-full blur-xl pointer-events-none" />
+
+            <div className="w-full space-y-6 relative z-10">
+              <div className="pl-1">
+                <span className="font-bold text-xs font-mono uppercase tracking-widest text-blue-200">ONBOARDING SETUP</span>
+              </div>
+
+              {/* Vertical Stepper List */}
+              <div className="w-full space-y-2.5 pl-1">
+                {[
+                  { id: 1, title: 'Welcome Screen' },
+                  { id: 2, title: 'Personal Info' },
+                  { id: 3, title: 'Age Group' },
+                  { id: 4, title: 'Geographics' },
+                  { id: 5, title: 'Education' },
+                  { id: 6, title: 'Occupation' },
+                  { id: 7, title: 'Languages' },
+                  { id: 8, title: 'Verification' },
+                  { id: 9, title: 'Design Avatar' },
+                  { id: 10, title: 'Final Review' }
+                ].map((sConfig) => {
+                  const stepNum = sConfig.id;
+                  const isActive = step === stepNum && !completed;
+                  const isPassed = stepNum < step || completed;
+                  return (
+                    <div key={stepNum} className="flex items-center gap-3 text-left">
+                      {/* Bullet number / check */}
+                      <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold transition-all ${
+                        isActive 
+                          ? 'bg-white text-blue-600 ring-4 ring-white/20' 
+                          : isPassed 
+                          ? 'bg-emerald-500 text-white' 
+                          : 'bg-white/20 text-white/50'
+                      }`}>
+                        {isPassed ? '✓' : stepNum}
+                      </div>
+                      <span className={`text-[11px] font-semibold transition-all ${
+                        isActive 
+                          ? 'text-white font-bold' 
+                          : isPassed 
+                          ? 'text-white/80' 
+                          : 'text-white/40'
+                      }`}>
+                        {sConfig.title}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
-            {/* PHONE HEADER: STATUS BAR */}
-            <div className="h-10 pt-4 px-6 flex items-center justify-between z-40 bg-white/90 backdrop-blur-sm border-b border-slate-50 select-none text-slate-950">
-              <span className="text-xs font-bold font-sans tracking-tight">11:30</span>
-              <div className="flex items-center gap-2">
-                <button 
-                  onClick={() => setShowDbDrawer(true)} 
-                  className="p-1 -m-1 hover:bg-slate-100 rounded-full transition-colors pointer-events-auto cursor-pointer"
-                  title="Database Settings"
-                >
-                  <Database className="w-3 h-3 text-indigo-600 hover:text-indigo-800" />
-                </button>
-                <Signal className="w-3.5 h-3.5" />
-                <Wifi className="w-3.5 h-3.5" />
-                <Battery className="w-4 h-4" />
-              </div>
-            </div>
-
-            {/* PRIMARY PHONE INTERACTIVE BODY */}
-            <div className="flex-1 overflow-x-hidden overflow-y-auto px-5 py-4 custom-scrollbar bg-white flex flex-col">
-              
+            {/* Bottom Illustration */}
+            <div className="w-full relative z-10 flex justify-center mt-3 border-t border-white/10 pt-3">
               {completed ? (
-                // Success Completion Module
+                <OnboardingIllustration type="success" />
+              ) : (
+                <OnboardingIllustration type="welcome" />
+              )}
+            </div>
+          </aside>
+
+          {/* RIGHT PANEL: DYNAMIC FORM/REVIEW PANEL */}
+          <main className={`flex-grow bg-white flex flex-col justify-between overflow-y-auto custom-scrollbar relative min-h-0 ${
+            deviceMode === 'mobile' 
+              ? 'p-4' 
+              : deviceMode === 'tablet' 
+              ? 'p-6' 
+              : 'p-4 sm:p-8 md:p-12'
+          }`}>
+            
+            {completed ? (
+              // Success Completion Module
+              <div className="flex-1 overflow-y-auto pr-1 custom-scrollbar min-h-0">
                 <OnboardingFinalReview
                   data={data}
                   onNavigateToStep={handleEditNav}
@@ -335,99 +493,115 @@ export default function App() {
                   onCopyJson={copyJsonToClipboard}
                   copiedState={copiedState}
                 />
-              ) : (
-                <div className="flex-1 flex flex-col">
-                  
-                  {/* Welcome Screen (Step 1) */}
-                  {step === 1 && (
-                    <div className="flex-1 flex flex-col justify-between text-center py-2 animate-fadeIn">
-                      <div className="space-y-4">
+              </div>
+            ) : (
+              <div className="flex-1 flex flex-col justify-between min-h-0">
+                
+                {/* Welcome Screen (Step 1) */}
+                {step === 1 && (
+                  <div className="flex-1 flex flex-col justify-between text-center py-6 animate-fadeIn">
+                    <div className="my-auto space-y-5">
+                      {/* Welcoming Illustration */}
+                      <div className="w-full flex justify-center">
                         <OnboardingIllustration type="welcome" />
-                        <div className="space-y-1.5">
-                          <h2 className="text-2xl font-bold font-display text-slate-900 tracking-tight">
-                            Welcome to EVE
-                          </h2>
-                          <p className="text-xs text-slate-500 leading-normal max-w-[260px] mx-auto">
-                            Experience premium interactive onboarding that gathers your demographics, career profile, and verification keys efficiently.
-                          </p>
-                        </div>
                       </div>
-
-                      <div className="space-y-3.5 mt-6">
-                        <button
-                          type="button"
-                          onClick={handleNext}
-                          className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-xs tracking-wide uppercase transition-colors shadow-md flex items-center justify-center gap-1.5 group cursor-pointer"
-                        >
-                          Get Started
-                          <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
-                        </button>
-
-                        <div className="text-[10px] text-slate-400 font-mono tracking-wide flex items-center justify-center gap-1 flex-wrap">
-                          <Lock className="w-3 h-3 text-emerald-500" />
-                          Data auto-saves locally instantly
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Step-by-Step Forms (Steps 2 to 9) */}
-                  {step >= 2 && step <= 9 && (
-                    <div className="flex-1 flex flex-col justify-between animate-fadeIn">
                       
-                      {/* Step Label Header */}
-                      <div className="mb-4 text-left select-none">
-                        <span className="text-[9px] font-mono tracking-widest text-indigo-600 font-bold uppercase block">
-                          Platform Step {step} of 10
-                        </span>
-                        <h3 className="text-lg font-bold font-display text-slate-950 tracking-tight leading-snug">
-                          {step === 2 && 'Personal Attributes'}
-                          {step === 3 && 'Demographics Sage'}
-                          {step === 4 && 'Geographical Location'}
-                          {step === 5 && 'Academic Qualification'}
-                          {step === 6 && 'Career & Occupation'}
-                          {step === 7 && 'Fluency Languages'}
-                          {step === 8 && 'Security Verification'}
-                          {step === 9 && 'Design Avatar'}
-                        </h3>
+                      <div className="space-y-3">
+                        <h2 className={`font-extrabold font-display text-slate-900 tracking-tight ${
+                          deviceMode === 'mobile' ? 'text-2xl' : 'text-3xl sm:text-4xl'
+                        }`}>
+                          Welcome to EVE
+                        </h2>
+                        <p className={`text-slate-500 leading-relaxed mx-auto ${
+                          deviceMode === 'mobile' ? 'text-xs max-w-[280px]' : 'text-sm sm:text-base max-w-[420px]'
+                        }`}>
+                          Experience premium interactive onboarding that gathers your demographics, career profile, and verification keys efficiently.
+                        </p>
                       </div>
-
-                      {/* Core Form Area */}
-                      <div className="flex-1 py-1">
-                        <OnboardingStepRenderer
-                          stepId={step}
-                          data={data}
-                          updateData={(updates) => setData(p => ({ ...p, ...updates }))}
-                          setErrors={setErrors}
-                        />
-
-                        {/* Errors Display block */}
-                        {errors.length > 0 && (
-                          <div className="mt-3 bg-red-50 border border-red-100 rounded-xl p-2.5 text-left animate-fadeIn">
-                            {errors.map((err, i) => (
-                              <p key={i} className="text-[11px] text-red-600 font-medium">
-                                {err}
-                              </p>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-
                     </div>
-                  )}
 
-                  {/* Final Review (Step 10) */}
-                  {step === 10 && (
-                    <div className="flex-1 flex flex-col justify-between animate-fadeIn">
-                      <div className="text-left mb-3">
-                        <span className="text-[9px] font-mono tracking-widest text-indigo-600 font-bold uppercase block">
-                          Platform Step 10 of 10
-                        </span>
-                        <h3 className="text-lg font-bold font-display text-slate-950 tracking-tight leading-snug">
-                          Final Review Setup
-                        </h3>
+                    <div className="space-y-4 mt-6 shrink-0">
+                      <button
+                        type="button"
+                        onClick={handleNext}
+                        className={`w-full max-w-sm mx-auto bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold uppercase transition-colors shadow-md flex items-center justify-center gap-1.5 group cursor-pointer ${
+                          deviceMode === 'mobile' ? 'py-2.5 px-4 text-xs' : 'py-3.5 px-6 text-xs tracking-wide'
+                        }`}
+                      >
+                        Get Started
+                        <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+                      </button>
+
+                      <div className="text-[10px] text-slate-400 font-mono tracking-wide flex items-center justify-center gap-1">
+                        <Lock className="w-3 h-3 text-emerald-500" />
+                        Data auto-saves locally instantly
                       </div>
+                    </div>
+                  </div>
+                )}
 
+                {/* Step-by-Step Forms (Steps 2 to 9) */}
+                {step >= 2 && step <= 9 && (
+                  <div className="flex-1 flex flex-col justify-between animate-fadeIn min-h-0">
+                    
+                    {/* Step Label Header */}
+                    <div className="mb-4 md:mb-6 text-left select-none border-b border-slate-100 pb-3 md:pb-4 shrink-0">
+                      <span className="text-[10px] font-mono tracking-widest text-indigo-655 font-bold uppercase block">
+                        Platform Step {step} of 10
+                      </span>
+                      <h3 className={`font-bold font-display text-slate-955 tracking-tight leading-snug ${
+                        deviceMode === 'mobile' ? 'text-lg' : 'text-xl sm:text-2xl'
+                      }`}>
+                        {step === 2 && 'Personal Attributes'}
+                        {step === 3 && 'Demographics Sage'}
+                        {step === 4 && 'Geographical Location'}
+                        {step === 5 && 'Academic Qualification'}
+                        {step === 6 && 'Career & Occupation'}
+                        {step === 7 && 'Fluency Languages'}
+                        {step === 8 && 'Security Verification'}
+                        {step === 9 && 'Design Avatar'}
+                      </h3>
+                    </div>
+
+                    {/* Core Form Area */}
+                    <div className="flex-1 overflow-y-auto pr-1 py-1 custom-scrollbar min-h-0 text-left">
+                      <OnboardingStepRenderer
+                        stepId={step}
+                        data={data}
+                        updateData={(updates) => setData(p => ({ ...p, ...updates }))}
+                        setErrors={setErrors}
+                      />
+
+                      {/* Errors Display block */}
+                      {errors.length > 0 && (
+                        <div className="mt-4 bg-red-50 border border-red-100 rounded-xl p-4 text-left animate-fadeIn">
+                          {errors.map((err, i) => (
+                            <p key={i} className="text-xs text-red-655 font-medium">
+                              {err}
+                            </p>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                  </div>
+                )}
+
+                {/* Final Review (Step 10) */}
+                {step === 10 && (
+                  <div className="flex-1 flex flex-col justify-between animate-fadeIn min-h-0">
+                    <div className="text-left mb-4 border-b border-slate-100 pb-4 shrink-0">
+                      <span className="text-[10px] font-mono tracking-widest text-indigo-600 font-bold uppercase block">
+                        Platform Step 10 of 10
+                      </span>
+                      <h3 className={`font-bold font-display text-slate-950 tracking-tight leading-snug ${
+                        deviceMode === 'mobile' ? 'text-lg' : 'text-xl sm:text-2xl'
+                      }`}>
+                        Final Review Setup
+                      </h3>
+                    </div>
+
+                    <div className="flex-1 overflow-y-auto pr-1 custom-scrollbar min-h-0 text-left">
                       <OnboardingFinalReview
                         data={data}
                         onNavigateToStep={handleEditNav}
@@ -437,23 +611,28 @@ export default function App() {
                         copiedState={copiedState}
                       />
                     </div>
-                  )}
+                  </div>
+                )}
 
-                </div>
-              )}
-
-            </div>
+              </div>
+            )}
 
             {/* NAVIGATION FOOTER (Steps 2 to 10) */}
             {!completed && step >= 2 && (
-              <div className="bg-slate-50 border-t border-slate-100 px-4 py-3 flex flex-col gap-2 relative z-30 select-none">
+              <div className={`bg-slate-50 border-t border-slate-100 flex flex-col gap-2 relative z-30 select-none mt-6 shrink-0 ${
+                deviceMode === 'mobile' 
+                  ? '-mx-4 -mb-4 px-4 py-3.5' 
+                  : deviceMode === 'tablet' 
+                  ? '-mx-6 -mb-6 px-6 py-4' 
+                  : '-mx-4 sm:-mx-8 md:-mx-12 -mb-4 sm:-mb-8 md:-mb-12 px-4 sm:px-8 md:px-12 py-4 md:py-5'
+              }`}>
                 
                 {/* Back path loops to return to review */}
                 {hasFastReviewPath && (
                   <button
                     type="button"
                     onClick={handleJumpToReview}
-                    className="text-[10px] text-indigo-600 hover:underline font-bold text-center block mb-1 cursor-pointer"
+                    className="text-[10px] text-indigo-600 hover:underline font-bold text-center block mb-1 cursor-pointer animate-pulse"
                   >
                     Return to Final Review (Step 10)
                   </button>
@@ -466,7 +645,9 @@ export default function App() {
                     <button
                       type="button"
                       onClick={handleSkip}
-                      className="py-1.5 px-3 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1 cursor-pointer"
+                      className={`border border-slate-200 hover:bg-slate-100 rounded-lg font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1 cursor-pointer transition-colors shadow-sm bg-white ${
+                        deviceMode === 'mobile' ? 'py-1.5 px-2.5 text-[11px]' : 'py-1.5 px-3.5 sm:py-2 sm:px-4 text-xs'
+                      }`}
                     >
                       Skip
                     </button>
@@ -474,7 +655,9 @@ export default function App() {
                     <button
                       type="button"
                       onClick={handleBack}
-                      className="py-1.5 px-3 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1 cursor-pointer"
+                      className={`border border-slate-200 hover:bg-slate-100 rounded-lg font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1 cursor-pointer transition-colors shadow-sm bg-white ${
+                        deviceMode === 'mobile' ? 'py-1.5 px-2.5 text-[11px]' : 'py-1.5 px-3.5 sm:py-2 sm:px-4 text-xs'
+                      }`}
                     >
                       <ArrowLeft className="w-3.5 h-3.5" />
                       Back
@@ -497,7 +680,7 @@ export default function App() {
                           }}
                           className={`h-1.5 rounded-full cursor-pointer transition-all ${
                             isActive
-                              ? 'w-4.5 bg-blue-600'
+                              ? 'w-4.5 sm:w-6 bg-blue-600'
                               : stepNum < step
                               ? 'w-1.5 bg-blue-400'
                               : 'w-1.5 bg-slate-300'
@@ -511,7 +694,9 @@ export default function App() {
                   <button
                     type="button"
                     onClick={handleNext}
-                    className="py-1.5 px-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold text-xs tracking-wider uppercase flex items-center gap-1 transition-colors cursor-pointer"
+                    className={`bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold uppercase flex items-center gap-1 transition-colors cursor-pointer ${
+                      deviceMode === 'mobile' ? 'py-1.5 px-3.5 text-[11px]' : 'py-1.5 px-3.5 sm:py-2 sm:px-5 text-xs tracking-wider'
+                    }`}
                   >
                     {step === 10 ? 'Publish' : 'Next'}
                     <ArrowRight className="w-3.5 h-3.5" />
@@ -521,87 +706,46 @@ export default function App() {
               </div>
             )}
 
-            {/* INTEGRATED LIVE SYNC NOTIFICATION DOT */}
-            {showSyncBadge && (
+          </main>
+
+          {/* Database settings slide-over drawer inside the workspace */}
+          {showDbDrawer && (
+            <div 
+              className="absolute inset-0 bg-slate-950/60 z-50 flex justify-end pointer-events-auto cursor-pointer animate-fadeIn" 
+              onClick={() => setShowDbDrawer(false)}
+            >
               <div 
-                onClick={() => setShowDbDrawer(true)}
-                className="absolute bottom-11 right-3 py-1 px-2.5 bg-slate-900/90 hover:bg-slate-800 text-white text-[9px] font-mono rounded-full flex items-center gap-1.5 shadow backdrop-blur-md transition-all duration-300 z-50 pointer-events-auto cursor-pointer"
+                onClick={(e) => e.stopPropagation()}
+                className="w-full max-w-[360px] h-full bg-white border-l border-slate-200 p-6 overflow-y-auto custom-scrollbar flex flex-col cursor-default"
               >
-                {syncState === 'syncing' && (
-                  <>
-                    <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-ping" />
-                    <span>Syncing with cloud...</span>
-                  </>
-                )}
-                {syncState === 'synced' && (
-                  <>
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                    <span>Cloud Sync Active</span>
-                  </>
-                )}
-                {syncState === 'offline' && (
-                  <>
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                    <span>Saved Locally (Offline)</span>
-                  </>
-                )}
-              </div>
-            )}
-
-            {/* Bottom Sheet Drawer for Database Settings */}
-            <AnimatePresence>
-              {showDbDrawer && (
-                <>
-                  {/* Backdrop overlay */}
-                  <motion.div 
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
+                <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-2">
+                  <h3 className="text-xs font-bold text-slate-900 flex items-center gap-1.5 font-display">
+                    <Database className="w-4 h-4 text-indigo-650 animate-pulse" />
+                    Database Connection Setup
+                  </h3>
+                  <button 
                     onClick={() => setShowDbDrawer(false)}
-                    className="absolute inset-0 bg-slate-950/60 z-40 pointer-events-auto cursor-pointer"
-                  />
-                  {/* Drawer container */}
-                  <motion.div
-                    initial={{ y: '100%' }}
-                    animate={{ y: 0 }}
-                    exit={{ y: '100%' }}
-                    transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                    className="absolute bottom-0 inset-x-0 bg-white rounded-t-3xl border-t border-slate-200 shadow-2xl z-50 p-4 pointer-events-auto overflow-y-auto max-h-[85%] custom-scrollbar flex flex-col"
+                    className="text-[11px] font-bold text-slate-400 hover:text-slate-600 cursor-pointer"
                   >
-                    {/* Drag handle */}
-                    <div className="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-3 shrink-0" />
-                    
-                    <div className="flex items-center justify-between mb-2 shrink-0">
-                      <h3 className="font-bold text-slate-900 text-xs flex items-center gap-1.5 font-display">
-                        <Database className="w-3.5 h-3.5 text-indigo-600" />
-                        Database Connection
-                      </h3>
-                      <button 
-                        onClick={() => setShowDbDrawer(false)}
-                        className="text-[11px] font-bold text-slate-400 hover:text-slate-600 cursor-pointer"
-                      >
-                        Close
-                      </button>
-                    </div>
+                    Close
+                  </button>
+                </div>
 
-                    <div className="flex-1 overflow-y-auto custom-scrollbar pr-0.5">
-                      <SupabaseSettings 
-                        syncState={syncState} 
-                        onCredentialsChange={() => setReinitCounter(c => c + 1)}
-                        onClose={() => setShowDbDrawer(false)}
-                        isMobileDrawer={true}
-                      />
-                    </div>
-                  </motion.div>
-                </>
-              )}
-            </AnimatePresence>
+                <div className="flex-1 overflow-y-auto custom-scrollbar">
+                  <SupabaseSettings 
+                    syncState={syncState} 
+                    onCredentialsChange={() => setReinitCounter(c => c + 1)}
+                    onClose={() => setShowDbDrawer(false)}
+                    isMobileDrawer={true}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
 
-          </div>
         </div>
 
       </div>
-
     </div>
   );
 }

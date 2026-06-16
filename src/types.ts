@@ -17,6 +17,7 @@ export interface OnboardingData {
   profileImg: string; // Base64 or preset image source URL
   avatarType: 'upload' | 'camera' | 'preset';
   presetAvatarId: string;
+  createdAt?: string;
 }
 
 export type OnboardingStepId = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
