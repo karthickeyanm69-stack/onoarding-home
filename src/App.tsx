@@ -16,20 +16,9 @@ const initialData: OnboardingData = {
   fullName: '',
   preferredName: '',
   gender: '',
-  ageGroup: '',
-  country: '',
-  state: '',
-  city: '',
   educationLevel: '',
-  occupation: '',
-  languages: [],
-  email: '',
-  emailVerified: false,
-  mobile: '',
-  mobileVerified: false,
-  profileImg: '',
-  avatarType: 'preset',
-  presetAvatarId: ''
+  fieldOfStudy: '',
+  institution: ''
 };
 
 export default function App() {
@@ -51,7 +40,7 @@ export default function App() {
       const savedStep = localStorage.getItem('ewe_onboarding_step');
       if (savedStep) {
         const parsed = parseInt(savedStep, 10);
-        if (parsed >= 1 && parsed <= 10) return parsed as OnboardingStepId;
+        if (parsed >= 1 && parsed <= 3) return parsed as OnboardingStepId;
       }
     } catch {}
     return 1;
@@ -163,11 +152,8 @@ export default function App() {
 
     return () => clearTimeout(timer);
   }, [
-    data.fullName, data.preferredName, data.gender, data.ageGroup, 
-    data.country, data.state, data.city, data.educationLevel, 
-    data.occupation, data.languages, data.email, data.emailVerified, 
-    data.mobile, data.mobileVerified, data.profileImg, data.avatarType, 
-    data.presetAvatarId, step, completed, reinitCounter
+    data.fullName, data.preferredName, data.gender, data.educationLevel,
+    data.fieldOfStudy, data.institution, step, completed, reinitCounter
   ]);
 
   // Validate step requirements
@@ -182,31 +168,14 @@ export default function App() {
         currentErrors.push('Please choose a gender preference.');
       }
     } else if (currentStep === 3) {
-      if (!data.ageGroup) {
-        currentErrors.push('Please select your age staging category.');
-      }
-    } else if (currentStep === 5) {
       if (!data.educationLevel) {
-        currentErrors.push('Please specify your current academic level.');
+        currentErrors.push('Highest education level is required.');
       }
-    } else if (currentStep === 6) {
-      if (!data.occupation) {
-        currentErrors.push('Please select your primary industrial occupation.');
+      if (!data.fieldOfStudy.trim()) {
+        currentErrors.push('Field of study is required.');
       }
-    } else if (currentStep === 7) {
-      if (data.languages.length === 0) {
-        currentErrors.push('Please check at least one fluent language.');
-      }
-    } else if (currentStep === 8) {
-      if (!data.emailVerified) {
-        currentErrors.push('Valid email address (and automatic verification scan) is required.');
-      }
-      if (!data.mobileVerified) {
-        currentErrors.push('Please enter mobile phone number and security PIN "1234".');
-      }
-    } else if (currentStep === 9) {
-      if (!data.profileImg) {
-        currentErrors.push('Please configure either a preset avatar, camera snapshot, or uploaded photo.');
+      if (!data.institution.trim()) {
+        currentErrors.push('Institution / School is required.');
       }
     }
 
@@ -223,14 +192,7 @@ export default function App() {
     // Clear previous errors
     setErrors([]);
 
-    if (hasFastReviewPath) {
-      // If user came via edit, jump right back to Review
-      setStep(10);
-      setHasFastReviewPath(false);
-      return;
-    }
-
-    if (step < 10) {
+    if (step < 3) {
       setStep((step + 1) as OnboardingStepId);
     } else {
       // Final confirmation
@@ -478,16 +440,9 @@ export default function App() {
               {/* Vertical Stepper List */}
               <div className="w-full space-y-2.5 pl-1">
                 {[
-                  { id: 1, title: 'Welcome Screen' },
-                  { id: 2, title: 'Personal Info' },
-                  { id: 3, title: 'Age Group' },
-                  { id: 4, title: 'Geographics' },
-                  { id: 5, title: 'Education' },
-                  { id: 6, title: 'Occupation' },
-                  { id: 7, title: 'Languages' },
-                  { id: 8, title: 'Verification' },
-                  { id: 9, title: 'Design Avatar' },
-                  { id: 10, title: 'Final Review' }
+                  { id: 1, title: 'Welcome' },
+                  { id: 2, title: 'Personal Details' },
+                  { id: 3, title: 'Academic Details' }
                 ].map((sConfig) => {
                   const stepNum = sConfig.id;
                   const isActive = step === stepNum && !completed;
@@ -519,13 +474,9 @@ export default function App() {
               </div>
             </div>
 
-            {/* Bottom Illustration */}
-            <div className="w-full relative z-10 flex justify-center mt-3 border-t border-white/10 pt-3">
-              {completed ? (
-                <OnboardingIllustration type="success" />
-              ) : (
-                <OnboardingIllustration type="welcome" />
-              )}
+            {/* Bottom Info text instead of illustration */}
+            <div className="w-full relative z-10 text-[10px] text-white/50 text-center font-mono border-t border-white/10 pt-3">
+              EVE Platform v1.0
             </div>
           </aside>
 
@@ -552,26 +503,27 @@ export default function App() {
               </div>
             ) : (
               <div className="flex-1 flex flex-col justify-between min-h-0">
-                
-                {/* Welcome Screen (Step 1) */}
+                                {/* Welcome Screen (Step 1) */}
                 {step === 1 && (
                   <div className="flex-1 flex flex-col justify-between text-center py-6 animate-fadeIn">
                     <div className="my-auto space-y-5">
-                      {/* Welcoming Illustration */}
+                      {/* Typographic book SVG icon */}
                       <div className="w-full flex justify-center">
-                        <OnboardingIllustration type="welcome" />
+                        <svg className="w-16 h-16 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
                       </div>
                       
                       <div className="space-y-3">
                         <h2 className={`font-extrabold font-display text-slate-900 tracking-tight ${
-                          deviceMode === 'mobile' ? 'text-2xl' : 'text-3xl sm:text-4xl'
+                          deviceMode === 'mobile' ? 'text-2xl' : 'text-3xl'
                         }`}>
-                          Welcome to EVE
+                          Build your profile.
                         </h2>
                         <p className={`text-slate-500 leading-relaxed mx-auto ${
-                          deviceMode === 'mobile' ? 'text-xs max-w-[280px]' : 'text-sm sm:text-base max-w-[420px]'
+                          deviceMode === 'mobile' ? 'text-xs max-w-[280px]' : 'text-sm max-w-[420px]'
                         }`}>
-                          Experience premium interactive onboarding that gathers your demographics, career profile, and verification keys efficiently.
+                          Welcome to EVE Learning Platform. Set up your academic details to unlock personalized courses, assignments, and certificates.
                         </p>
                       </div>
                     </div>
@@ -590,37 +542,30 @@ export default function App() {
 
                       <div className="text-[10px] text-slate-400 font-mono tracking-wide flex items-center justify-center gap-1">
                         <Lock className="w-3 h-3 text-emerald-500" />
-                        Data auto-saves locally instantly
+                        Your progress auto-saves instantly
                       </div>
                     </div>
                   </div>
                 )}
 
-                {/* Step-by-Step Forms (Steps 2 to 9) */}
-                {step >= 2 && step <= 9 && (
+                {/* Step-by-Step Forms (Steps 2 and 3) */}
+                {(step === 2 || step === 3) && (
                   <div className="flex-1 flex flex-col justify-between animate-fadeIn min-h-0">
                     
                     {/* Step Label Header */}
                     <div className="mb-4 md:mb-6 text-left select-none border-b border-slate-100 pb-3 md:pb-4 shrink-0">
-                      <span className="text-[10px] font-mono tracking-widest text-indigo-655 font-bold uppercase block">
-                        Platform Step {step} of 10
+                      <span className="text-[10px] font-mono tracking-widest text-blue-600 font-bold uppercase block">
+                        Step {step} of 3
                       </span>
-                      <h3 className={`font-bold font-display text-slate-955 tracking-tight leading-snug ${
+                      <h3 className={`font-bold font-display text-slate-900 tracking-tight leading-snug ${
                         deviceMode === 'mobile' ? 'text-lg' : 'text-xl sm:text-2xl'
                       }`}>
-                        {step === 2 && 'Personal Attributes'}
-                        {step === 3 && 'Demographics Sage'}
-                        {step === 4 && 'Geographical Location'}
-                        {step === 5 && 'Academic Qualification'}
-                        {step === 6 && 'Career & Occupation'}
-                        {step === 7 && 'Fluency Languages'}
-                        {step === 8 && 'Security Verification'}
-                        {step === 9 && 'Design Avatar'}
+                        {step === 2 ? 'Personal Details' : 'Academic Details'}
                       </h3>
                     </div>
 
                     {/* Core Form Area */}
-                    <div className="flex-1 overflow-y-auto pr-1 py-1 custom-scrollbar min-h-0 text-left">
+                    <div className="flex-grow overflow-y-auto pr-1 py-1 custom-scrollbar min-h-0 text-left">
                       <OnboardingStepRenderer
                         stepId={step}
                         data={data}
@@ -630,9 +575,9 @@ export default function App() {
 
                       {/* Errors Display block */}
                       {errors.length > 0 && (
-                        <div className="mt-4 bg-red-50 border border-red-100 rounded-xl p-4 text-left animate-fadeIn">
+                        <div className="mt-4 bg-red-50 border border-red-150 rounded-xl p-4 text-left animate-fadeIn">
                           {errors.map((err, i) => (
-                            <p key={i} className="text-xs text-red-655 font-medium">
+                            <p key={i} className="text-xs text-red-600 font-semibold">
                               {err}
                             </p>
                           ))}
@@ -643,37 +588,10 @@ export default function App() {
                   </div>
                 )}
 
-                {/* Final Review (Step 10) */}
-                {step === 10 && (
-                  <div className="flex-1 flex flex-col justify-between animate-fadeIn min-h-0">
-                    <div className="text-left mb-4 border-b border-slate-100 pb-4 shrink-0">
-                      <span className="text-[10px] font-mono tracking-widest text-indigo-600 font-bold uppercase block">
-                        Platform Step 10 of 10
-                      </span>
-                      <h3 className={`font-bold font-display text-slate-950 tracking-tight leading-snug ${
-                        deviceMode === 'mobile' ? 'text-lg' : 'text-xl sm:text-2xl'
-                      }`}>
-                        Final Review Setup
-                      </h3>
-                    </div>
-
-                    <div className="flex-1 overflow-y-auto pr-1 custom-scrollbar min-h-0 text-left">
-                      <OnboardingFinalReview
-                        data={data}
-                        onNavigateToStep={handleEditNav}
-                        isCompleted={false}
-                        onReset={handleReset}
-                        onCopyJson={copyJsonToClipboard}
-                        copiedState={copiedState}
-                      />
-                    </div>
-                  </div>
-                )}
-
               </div>
             )}
 
-            {/* NAVIGATION FOOTER (Steps 2 to 10) */}
+            {/* NAVIGATION FOOTER (Steps 2 to 3) */}
             {!completed && step >= 2 && (
               <div className={`bg-slate-50 border-t border-slate-100 flex flex-col gap-2 relative z-30 select-none mt-6 shrink-0 ${
                 deviceMode === 'mobile' 
@@ -682,18 +600,6 @@ export default function App() {
                   ? '-mx-6 -mb-6 px-6 py-4' 
                   : '-mx-4 sm:-mx-8 md:-mx-12 -mb-4 sm:-mb-8 md:-mb-12 px-4 sm:px-8 md:px-12 py-4 md:py-5'
               }`}>
-                
-                {/* Back path loops to return to review */}
-                {hasFastReviewPath && (
-                  <button
-                    type="button"
-                    onClick={handleJumpToReview}
-                    className="text-[10px] text-indigo-600 hover:underline font-bold text-center block mb-1 cursor-pointer animate-pulse"
-                  >
-                    Return to Final Review (Step 10)
-                  </button>
-                )}
-
                 <div className="flex items-center justify-between gap-2">
                   
                   {/* LEFT BUTTON: BACK */}
@@ -710,15 +616,14 @@ export default function App() {
 
                   {/* CENTERING DOCK CAPSULES */}
                   <div className="flex items-center gap-1">
-                    {Array.from({ length: 10 }).map((_, idx) => {
+                    {Array.from({ length: 3 }).map((_, idx) => {
                       const stepNum = idx + 1;
                       const isActive = step === stepNum;
                       return (
                         <div
                           key={stepNum}
                           onClick={() => {
-                            // Enable jump navigation on already completed/reveified
-                            if (stepNum < step || step === 10) {
+                            if (stepNum < step) {
                               setStep(stepNum as OnboardingStepId);
                             }
                           }}
@@ -742,7 +647,7 @@ export default function App() {
                       deviceMode === 'mobile' ? 'py-1.5 px-3.5 text-[11px]' : 'py-1.5 px-3.5 sm:py-2 sm:px-5 text-xs tracking-wider'
                     }`}
                   >
-                    {step === 10 ? 'Publish' : 'Next'}
+                    {step === 3 ? 'Complete' : 'Next'}
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
 

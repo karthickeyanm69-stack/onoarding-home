@@ -60,20 +60,9 @@ export async function syncProfileToCloud(data: OnboardingData, currentStep: numb
     full_name: data.fullName,
     preferred_name: data.preferredName,
     gender: data.gender,
-    age_group: data.ageGroup,
-    country: data.country,
-    state: data.state,
-    city: data.city,
     education_level: data.educationLevel,
-    occupation: data.occupation,
-    languages: data.languages,
-    email: data.email,
-    email_verified: data.emailVerified,
-    mobile: data.mobile,
-    mobile_verified: data.mobileVerified,
-    profile_img: data.profileImg,
-    avatar_type: data.avatarType,
-    preset_avatar_id: data.presetAvatarId,
+    field_of_study: data.fieldOfStudy,
+    institution: data.institution,
     step: currentStep,
     completed: isCompleted,
     updated_at: new Date().toISOString()
@@ -132,20 +121,9 @@ export async function fetchProfiles(): Promise<OnboardingData[]> {
     fullName: row.full_name || '',
     preferredName: row.preferred_name || '',
     gender: row.gender || '',
-    ageGroup: row.age_group || '',
-    country: row.country || '',
-    state: row.state || '',
-    city: row.city || '',
     educationLevel: row.education_level || '',
-    occupation: row.occupation || '',
-    languages: row.languages || [],
-    email: row.email || '',
-    emailVerified: row.email_verified || false,
-    mobile: row.mobile || '',
-    mobileVerified: row.mobile_verified || false,
-    profileImg: row.profile_img || '',
-    avatarType: row.avatar_type || 'preset',
-    presetAvatarId: row.preset_avatar_id || '',
+    fieldOfStudy: row.field_of_study || '',
+    institution: row.institution || '',
     createdAt: row.created_at,
     step: row.step,
     completed: row.completed
@@ -211,20 +189,9 @@ export async function updateProfile(
   if (updates.fullName !== undefined) payload.full_name = updates.fullName;
   if (updates.preferredName !== undefined) payload.preferred_name = updates.preferredName;
   if (updates.gender !== undefined) payload.gender = updates.gender;
-  if (updates.ageGroup !== undefined) payload.age_group = updates.ageGroup;
-  if (updates.country !== undefined) payload.country = updates.country;
-  if (updates.state !== undefined) payload.state = updates.state;
-  if (updates.city !== undefined) payload.city = updates.city;
   if (updates.educationLevel !== undefined) payload.education_level = updates.educationLevel;
-  if (updates.occupation !== undefined) payload.occupation = updates.occupation;
-  if (updates.languages !== undefined) payload.languages = updates.languages;
-  if (updates.email !== undefined) payload.email = updates.email;
-  if (updates.emailVerified !== undefined) payload.email_verified = updates.emailVerified;
-  if (updates.mobile !== undefined) payload.mobile = updates.mobile;
-  if (updates.mobileVerified !== undefined) payload.mobile_verified = updates.mobileVerified;
-  if (updates.profileImg !== undefined) payload.profile_img = updates.profileImg;
-  if (updates.avatarType !== undefined) payload.avatar_type = updates.avatarType;
-  if (updates.presetAvatarId !== undefined) payload.preset_avatar_id = updates.presetAvatarId;
+  if (updates.fieldOfStudy !== undefined) payload.field_of_study = updates.fieldOfStudy;
+  if (updates.institution !== undefined) payload.institution = updates.institution;
 
   payload.step = currentStep;
   payload.completed = isCompleted;

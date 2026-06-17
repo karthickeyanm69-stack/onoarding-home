@@ -103,7 +103,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
   const getProfileStatus = (p: OnboardingData): 'Completed' | 'In Progress' | 'Draft' => {
     if ((p as any).completed === true) return 'Completed';
     const stepVal = (p as any).step || 1;
-    if (stepVal >= 3) return 'In Progress';
+    if (stepVal >= 2) return 'In Progress';
     return 'Draft';
   };
 
@@ -217,13 +217,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
       const matchesSearch = 
         p.fullName.toLowerCase().includes(q) ||
         p.preferredName.toLowerCase().includes(q) ||
-        p.email.toLowerCase().includes(q) ||
-        p.mobile.toLowerCase().includes(q) ||
-        (p.occupation && p.occupation.toLowerCase().includes(q)) ||
         (p.educationLevel && p.educationLevel.toLowerCase().includes(q)) ||
-        (p.city && p.city.toLowerCase().includes(q)) ||
-        (p.state && p.state.toLowerCase().includes(q)) ||
-        (p.country && p.country.toLowerCase().includes(q));
+        (p.fieldOfStudy && p.fieldOfStudy.toLowerCase().includes(q)) ||
+        (p.institution && p.institution.toLowerCase().includes(q));
       if (!matchesSearch) return false;
     }
 
@@ -563,15 +559,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
               />
               User / Id {sortField === 'id' ? (sortDirection === 'asc' ? '▴' : '▾') : <span className="text-slate-300">▴</span>}
             </div>
-            <div className="col-span-3">Contact</div>
-            <div className="col-span-2">Location</div>
-            <div className="col-span-2">Demographics</div>
-            <div 
-              onClick={() => handleSort('step')} 
-              className="col-span-1 text-center flex items-center justify-center gap-0.5 cursor-pointer hover:text-slate-600"
-            >
-              Step {sortField === 'step' ? (sortDirection === 'asc' ? '▴' : '▾') : <span className="text-slate-300">▴</span>}
-            </div>
+            <div className="col-span-2">Gender</div>
+            <div className="col-span-2">Education</div>
+            <div className="col-span-2">Field of Study</div>
+            <div className="col-span-2">Institution</div>
             <div className="col-span-1 text-center">Action</div>
           </div>
 
@@ -647,72 +638,26 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
                     </div>
                   </div>
 
-                  {/* Contact */}
-                  <div className="col-span-3 truncate text-[11px] leading-tight flex flex-col justify-center min-w-0 pr-2">
-                    <span className={`font-semibold truncate ${isSelected ? 'text-white' : 'text-slate-700'}`}>{p.email || 'No email'}</span>
-                    <div className="flex items-center gap-1.5 mt-0.5">
-                      <span className={`font-mono text-[10px] ${isSelected ? 'text-blue-100' : 'text-slate-500'}`}>{p.mobile || 'No phone'}</span>
-                      {p.emailVerified && (
-                        <span 
-                          className={`text-[8px] font-black px-1 rounded-sm ${isSelected ? 'bg-white text-blue-700' : 'bg-blue-50 text-blue-600'}`}
-                          title="Email verified"
-                        >
-                          E
-                        </span>
-                      )}
-                      {p.mobileVerified && (
-                        <span 
-                          className={`text-[8px] font-black px-1 rounded-sm ${isSelected ? 'bg-white text-emerald-700' : 'bg-emerald-50 text-emerald-600'}`}
-                          title="Phone verified"
-                        >
-                          P
-                        </span>
-                      )}
-                    </div>
+                  {/* Gender */}
+                  <div className={`col-span-2 text-[11px] font-semibold truncate ${isSelected ? 'text-white' : 'text-slate-700'}`}>
+                    {p.gender || 'Not specified'}
                   </div>
 
-                  {/* Location */}
-                  <div className="col-span-2 text-[11px] font-semibold leading-tight min-w-0 pr-2">
-                    <div className={`truncate ${isSelected ? 'text-white' : 'text-slate-800'}`}>{displayLocation}</div>
+                  {/* Education */}
+                  <div className={`col-span-2 text-[11px] font-semibold truncate capitalize ${isSelected ? 'text-white' : 'text-slate-700'}`}>
+                    {p.educationLevel?.replace('-', ' ') || 'Undergraduate'}
+                  </div>
+
+                  {/* Field of Study */}
+                  <div className={`col-span-2 text-[11px] font-semibold truncate ${isSelected ? 'text-white' : 'text-slate-700'}`}>
+                    {p.fieldOfStudy || '—'}
+                  </div>
+
+                  {/* Institution */}
+                  <div className={`col-span-2 text-[11px] font-semibold truncate pr-2 ${isSelected ? 'text-white' : 'text-slate-700'}`}>
+                    <div className="truncate">{p.institution || '—'}</div>
                     <div className={`text-[9px] ${isSelected ? 'text-blue-200' : 'text-slate-400'} font-mono mt-0.5`}>
-                      Registered: {formatDateDisplay(profileDate)}
-                    </div>
-                  </div>
-
-                  {/* Demographics */}
-                  <div className="col-span-2 text-[11px] font-semibold leading-tight min-w-0 pr-2">
-                    <div className={`truncate ${isSelected ? 'text-white' : 'text-slate-850'}`}>
-                      {occupationStr || 'No occupation'}
-                    </div>
-                    {educationStr && (
-                      <div className={`text-[10px] truncate ${isSelected ? 'text-blue-200' : 'text-slate-400'} mt-0.5`}>
-                        {educationStr}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Step & Status */}
-                  <div className="col-span-1 text-center flex flex-col items-center justify-center">
-                    <span className={`text-[11px] font-bold font-mono ${isSelected ? 'text-white' : 'text-slate-800'}`}>{stepVal}/10</span>
-                    <div className="flex items-center gap-1 mt-0.5">
-                      {status === 'Completed' && (
-                        <>
-                          <span className={`w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-slate-350' : 'bg-slate-400'}`} />
-                          <span className={`text-[9px] font-bold ${isSelected ? 'text-blue-100' : 'text-slate-400'}`}>Done</span>
-                        </>
-                      )}
-                      {status === 'In Progress' && (
-                        <>
-                          <span className={`w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-cyan-300 animate-pulse' : 'bg-emerald-500'}`} />
-                          <span className={`text-[9px] font-bold ${isSelected ? 'text-white' : 'text-emerald-600'}`}>Active</span>
-                        </>
-                      )}
-                      {status === 'Draft' && (
-                        <>
-                          <span className={`w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-rose-300 animate-pulse' : 'bg-rose-500'}`} />
-                          <span className={`text-[9px] font-bold ${isSelected ? 'text-white' : 'text-rose-500'}`}>Draft</span>
-                        </>
-                      )}
+                      Reg: {formatDateDisplay(profileDate)}
                     </div>
                   </div>
 
@@ -855,7 +800,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
               
               {/* Identity Segment */}
               <div className="space-y-2.5">
-                <span className="text-[9px] font-mono tracking-widest text-[#0052ff] uppercase font-bold block">
+                <span className="text-[9px] font-mono tracking-widest text-[#2563EB] uppercase font-bold block">
                   Identity Details
                 </span>
                 
@@ -882,203 +827,70 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <label className="block text-[10px] font-semibold text-slate-700 mb-0.5">Gender</label>
-                    <select
-                      value={editingProfile.gender}
-                      onChange={(e: any) => setEditingProfile(prev => prev ? ({ ...prev, gender: e.target.value }) : null)}
-                      className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 bg-white"
-                    >
-                      <option value="">Choose...</option>
-                      <option value="male">Male</option>
-                      <option value="female">Female</option>
-                      <option value="non-binary">Non-Binary</option>
-                      <option value="prefer-not-to-say">Skip Label</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-[10px] font-semibold text-slate-700 mb-0.5">Age Group</label>
-                    <select
-                      value={editingProfile.ageGroup}
-                      onChange={(e: any) => setEditingProfile(prev => prev ? ({ ...prev, ageGroup: e.target.value }) : null)}
-                      className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 bg-white"
-                    >
-                      <option value="">Choose...</option>
-                      <option value="under-13">Under 13</option>
-                      <option value="13-17">13-17</option>
-                      <option value="18-24">18-24</option>
-                      <option value="25-34">25-34</option>
-                      <option value="35-44">35-44</option>
-                      <option value="45+">45+</option>
-                    </select>
-                  </div>
+                <div>
+                  <label className="block text-[10px] font-semibold text-slate-700 mb-0.5">Gender</label>
+                  <select
+                    value={editingProfile.gender}
+                    onChange={(e: any) => setEditingProfile(prev => prev ? ({ ...prev, gender: e.target.value }) : null)}
+                    className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 bg-white"
+                  >
+                    <option value="">Choose...</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="non-binary">Non-Binary</option>
+                    <option value="prefer-not-to-say">Prefer not to say</option>
+                  </select>
                 </div>
               </div>
 
-              {/* Geographic Segment */}
+              {/* Academic Segment */}
               <div className="space-y-2.5 pt-2 border-t border-slate-100">
-                <span className="text-[9px] font-mono tracking-widest text-[#0052ff] uppercase font-bold block">
-                  Location Geography
+                <span className="text-[9px] font-mono tracking-widest text-[#2563EB] uppercase font-bold block">
+                  Academic Details
                 </span>
                 
-                <div className="grid grid-cols-3 gap-2">
+                <div className="space-y-2">
                   <div>
-                    <label className="block text-[9px] font-semibold text-slate-700 mb-0.5">Country</label>
-                    <input
-                      type="text"
-                      value={editingProfile.country}
-                      onChange={(e) => setEditingProfile(prev => prev ? ({ ...prev, country: e.target.value }) : null)}
-                      className="w-full px-2 py-1 text-xs rounded-lg border border-slate-200"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[9px] font-semibold text-slate-700 mb-0.5">State</label>
-                    <input
-                      type="text"
-                      value={editingProfile.state}
-                      onChange={(e) => setEditingProfile(prev => prev ? ({ ...prev, state: e.target.value }) : null)}
-                      className="w-full px-2 py-1 text-xs rounded-lg border border-slate-200"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[9px] font-semibold text-slate-700 mb-0.5">City</label>
-                    <input
-                      type="text"
-                      value={editingProfile.city}
-                      onChange={(e) => setEditingProfile(prev => prev ? ({ ...prev, city: e.target.value }) : null)}
-                      className="w-full px-2 py-1 text-xs rounded-lg border border-slate-200"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Professional Segment */}
-              <div className="space-y-2.5 pt-2 border-t border-slate-100">
-                <span className="text-[9px] font-mono tracking-widest text-[#0052ff] uppercase font-bold block">
-                  Academic & Career
-                </span>
-                
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <label className="block text-[10px] font-semibold text-slate-700 mb-0.5">Education</label>
+                    <label className="block text-[10px] font-semibold text-slate-700 mb-0.5">Education Level</label>
                     <select
                       value={editingProfile.educationLevel}
                       onChange={(e: any) => setEditingProfile(prev => prev ? ({ ...prev, educationLevel: e.target.value }) : null)}
                       className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 bg-white"
                     >
                       <option value="">Choose...</option>
-                      <option value="school">Primary School</option>
-                      <option value="higher-secondary">Higher Secondary</option>
-                      <option value="diploma">Diploma Studies</option>
+                      <option value="high-school">High School</option>
                       <option value="undergraduate">Undergraduate Degree</option>
                       <option value="postgraduate">Postgraduate Degree</option>
-                      <option value="professional">Doctorate/Professional</option>
-                      <option value="other">Other Path</option>
+                      <option value="doctorate">Doctorate</option>
+                      <option value="other">Other</option>
                     </select>
                   </div>
 
                   <div>
-                    <label className="block text-[10px] font-semibold text-slate-700 mb-0.5">Occupation</label>
-                    <select
-                      value={editingProfile.occupation}
-                      onChange={(e: any) => setEditingProfile(prev => prev ? ({ ...prev, occupation: e.target.value }) : null)}
-                      className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 bg-white"
-                    >
-                      <option value="">Choose...</option>
-                      <option value="student">Student</option>
-                      <option value="developer">Developer</option>
-                      <option value="designer">Designer</option>
-                      <option value="teacher">Teacher</option>
-                      <option value="business-owner">Business Owner</option>
-                      <option value="freelancer">Freelancer</option>
-                      <option value="job-seeker">Job Seeker</option>
-                      <option value="other">Other Track</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              {/* Languages Segment */}
-              <div className="space-y-2.5 pt-2 border-t border-slate-100 text-left">
-                <span className="text-[9px] font-mono tracking-widest text-[#0052ff] uppercase font-bold block">
-                  Fluent Languages
-                </span>
-                <div className="grid grid-cols-2 gap-2 text-xs">
-                  {['English', 'Tamil', 'Hindi', 'Telugu', 'Malayalam', 'Kannada'].map((lang) => {
-                    const isChecked = editingProfile.languages?.includes(lang) || false;
-                    return (
-                      <label key={lang} className="flex items-center gap-2 cursor-pointer font-semibold text-slate-750 select-none">
-                        <input
-                          type="checkbox"
-                          checked={isChecked}
-                          onChange={(e) => {
-                            const currentLangs = editingProfile.languages || [];
-                            const updatedLangs = e.target.checked
-                              ? [...currentLangs, lang]
-                              : currentLangs.filter((l) => l !== lang);
-                            setEditingProfile(prev => prev ? ({ ...prev, languages: updatedLangs }) : null);
-                          }}
-                          className="rounded border-slate-300 text-[#0052ff] focus:ring-blue-500/20 w-3.5 h-3.5 cursor-pointer"
-                        />
-                        {lang}
-                      </label>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Secure Credentials */}
-              <div className="space-y-2.5 pt-2 border-t border-slate-100">
-                <span className="text-[9px] font-mono tracking-widest text-[#0052ff] uppercase font-bold block">
-                  Verification Contacts
-                </span>
-
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <label className="block text-[10px] font-semibold text-slate-700 mb-0.5">Email Address</label>
-                    <input
-                      type="email"
-                      value={editingProfile.email}
-                      onChange={(e) => setEditingProfile(prev => prev ? ({ ...prev, email: e.target.value }) : null)}
-                      className="w-full px-3 py-1.5 text-xs rounded-lg border border-slate-200 bg-slate-50/50"
-                    />
-                    <div className="flex items-center gap-1 mt-1">
-                      <input 
-                        type="checkbox" 
-                        id="emailVerified"
-                        checked={editingProfile.emailVerified} 
-                        onChange={(e) => setEditingProfile(prev => prev ? ({ ...prev, emailVerified: e.target.checked }) : null)}
-                      />
-                      <label htmlFor="emailVerified" className="text-[9px] text-slate-500 font-semibold cursor-pointer">Email Verified</label>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-[10px] font-semibold text-slate-700 mb-0.5">Mobile Phone</label>
+                    <label className="block text-[10px] font-semibold text-slate-700 mb-0.5">Field of Study</label>
                     <input
                       type="text"
-                      value={editingProfile.mobile}
-                      onChange={(e) => setEditingProfile(prev => prev ? ({ ...prev, mobile: e.target.value }) : null)}
+                      value={editingProfile.fieldOfStudy}
+                      onChange={(e) => setEditingProfile(prev => prev ? ({ ...prev, fieldOfStudy: e.target.value }) : null)}
                       className="w-full px-3 py-1.5 text-xs rounded-lg border border-slate-200 bg-slate-50/50"
                     />
-                    <div className="flex items-center gap-1 mt-1">
-                      <input 
-                        type="checkbox" 
-                        id="mobileVerified"
-                        checked={editingProfile.mobileVerified} 
-                        onChange={(e) => setEditingProfile(prev => prev ? ({ ...prev, mobileVerified: e.target.checked }) : null)}
-                      />
-                      <label htmlFor="mobileVerified" className="text-[9px] text-slate-500 font-semibold cursor-pointer">Phone Verified</label>
-                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-semibold text-slate-700 mb-0.5">School / Institution</label>
+                    <input
+                      type="text"
+                      value={editingProfile.institution}
+                      onChange={(e) => setEditingProfile(prev => prev ? ({ ...prev, institution: e.target.value }) : null)}
+                      className="w-full px-3 py-1.5 text-xs rounded-lg border border-slate-200 bg-slate-50/50"
+                    />
                   </div>
                 </div>
               </div>
 
               {/* Step and completion state */}
               <div className="space-y-2.5 pt-2 border-t border-slate-100">
-                <span className="text-[9px] font-mono tracking-widest text-[#0052ff] uppercase font-bold block">
+                <span className="text-[9px] font-mono tracking-widest text-[#2563EB] uppercase font-bold block">
                   App Progress Status
                 </span>
 
@@ -1086,13 +898,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
                   <div>
                     <label className="block text-[10px] font-semibold text-slate-700 mb-0.5">Step Location</label>
                     <select
-                      value={(editingProfile as any).step || 10}
+                      value={(editingProfile as any).step || 3}
                       onChange={(e: any) => setEditingProfile(prev => prev ? ({ ...prev, step: parseInt(e.target.value, 10) }) : null)}
                       className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 bg-white"
                     >
-                      {Array.from({ length: 10 }).map((_, idx) => (
-                        <option key={idx + 1} value={idx + 1}>Step {idx + 1}</option>
-                      ))}
+                      <option value="1">Step 1</option>
+                      <option value="2">Step 2</option>
+                      <option value="3">Step 3</option>
                     </select>
                   </div>
 
@@ -1114,7 +926,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
                 <button
                   type="submit"
                   disabled={saving}
-                  className="w-full py-2.5 bg-[#0052ff] hover:bg-blue-700 text-white rounded-xl font-bold text-xs uppercase transition-colors shadow-md flex items-center justify-center gap-1.5 disabled:opacity-50 cursor-pointer"
+                  className="w-full py-2.5 bg-[#2563EB] hover:bg-blue-700 text-white rounded-xl font-bold text-xs uppercase transition-colors shadow-md flex items-center justify-center gap-1.5 disabled:opacity-50 cursor-pointer"
                 >
                   {saving && <div className="w-3.5 h-3.5 rounded-full border border-white border-t-transparent animate-spin" />}
                   Apply Updates
