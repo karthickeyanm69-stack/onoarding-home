@@ -26,10 +26,12 @@ CREATE TABLE profiles (
     institution TEXT NOT NULL DEFAULT '',
     
     -- Section 3: Parent/Guardian Details
-    parent_name TEXT NOT NULL DEFAULT '',
-    parent_email TEXT NOT NULL DEFAULT '',
-    parent_phone TEXT NOT NULL DEFAULT '',
-    parent_relationship TEXT NOT NULL DEFAULT '',
+    -- NOTE: parent fields are nullable because Independent Adult learners have no guardian
+    is_independent_adult BOOLEAN NOT NULL DEFAULT FALSE,
+    parent_name TEXT,
+    parent_email TEXT,
+    parent_phone TEXT,
+    parent_relationship TEXT,
     
     -- Section 4: Learning Goals & Areas of Interest (PostgreSQL Arrays)
     learning_goals TEXT[] NOT NULL DEFAULT '{}'::TEXT[],
@@ -63,6 +65,7 @@ CREATE TABLE profiles (
 CREATE INDEX IF NOT EXISTS idx_profiles_completed ON profiles(completed);
 CREATE INDEX IF NOT EXISTS idx_profiles_updated_at ON profiles(updated_at DESC);
 CREATE INDEX IF NOT EXISTS idx_profiles_full_name ON profiles(full_name);
+CREATE INDEX IF NOT EXISTS idx_profiles_is_independent ON profiles(is_independent_adult);
 
 -- 3. ROW LEVEL SECURITY (RLS) & POLICIES
 -- Enable Row Level Security on the table
@@ -108,18 +111,40 @@ BEFORE UPDATE ON profiles
 FOR EACH ROW
 EXECUTE FUNCTION update_updated_at_column();
 
--- 5. SAMPLE SEED DATA (Optional)
--- Insert a test profile to verify structure
+-- 5. MIGRATION: If upgrading existing table, add missing column
+-- Run this block only if upgrading an existing database (not a fresh install):
+-- ALTER TABLE profiles ADD COLUMN IF NOT EXISTS is_independent_adult BOOLEAN NOT NULL DEFAULT FALSE;
+-- UPDATE profiles SET is_independent_adult = TRUE WHERE parent_name = 'SKIPPED';
+-- UPDATE profiles SET parent_name = NULL, parent_email = NULL, parent_phone = NULL, parent_relationship = NULL WHERE is_independent_adult = TRUE;
+
+-- 6. SAMPLE SEED DATA (Optional)
+-- Insert a test profile (with parent guardian) to verify structure
 INSERT INTO profiles (
     full_name, preferred_name, gender, education_level, field_of_study, institution, 
-    parent_name, parent_email, parent_phone, parent_relationship, 
+    is_independent_adult, parent_name, parent_email, parent_phone, parent_relationship, 
     learning_goals, interests, learning_preference, daily_commitment,
     ai_adaptive_difficulty, ai_study_reminders, ai_career_insights, ai_concept_explainer,
     notify_email_digest, notify_push, notify_weekly_achievements, step, completed
 ) VALUES (
     'Alex Mercer', 'Alex', 'non-binary', 'undergraduate', 'Computer Science', 'Stanford University',
-    'Helen Mercer', 'helen@example.com', '+15550199', 'mother',
+    FALSE, 'Helen Mercer', 'helen@example.com', '+15550199', 'mother',
     ARRAY['Software Engineering', 'AI & Machine Learning'], ARRAY['Web Technologies', 'Robotics'], 'interactive', 'serious',
     TRUE, TRUE, TRUE, TRUE,
     TRUE, FALSE, TRUE, 10, TRUE
 );
+
+-- Insert an independent adult learner profile as a test
+INSERT INTO profiles (
+    full_name, preferred_name, gender, education_level, field_of_study, institution, 
+    is_independent_adult, parent_name, parent_email, parent_phone, parent_relationship, 
+    learning_goals, interests, learning_preference, daily_commitment,
+    ai_adaptive_difficulty, ai_study_reminders, ai_career_insights, ai_concept_explainer,
+    notify_email_digest, notify_push, notify_weekly_achievements, step, completed
+) VALUES (
+    'Jordan Blake', 'Jordan', 'prefer-not-to-say', 'postgraduate', 'Data Science', 'MIT',
+    TRUE, NULL, NULL, NULL, NULL,
+    ARRAY['career-advancement', 'skill-improvement'], ARRAY['data-science', 'mathematics'], 'hands-on', 'intensive',
+    TRUE, FALSE, TRUE, TRUE,
+    FALSE, TRUE, FALSE, 10, TRUE
+);
+

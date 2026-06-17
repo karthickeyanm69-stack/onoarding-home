@@ -73,6 +73,8 @@ export async function syncProfileToCloud(data: OnboardingData, currentStep: numb
     throw new Error('Supabase not configured');
   }
 
+  const isIndependentAdult = data.parentName === 'SKIPPED';
+
   const payload = {
     full_name: data.fullName,
     preferred_name: data.preferredName,
@@ -80,10 +82,12 @@ export async function syncProfileToCloud(data: OnboardingData, currentStep: numb
     education_level: data.educationLevel,
     field_of_study: data.fieldOfStudy,
     institution: data.institution,
-    parent_name: data.parentName,
-    parent_email: data.parentEmail,
-    parent_phone: data.parentPhone,
-    parent_relationship: data.parentRelationship,
+    // For independent adults: store null for parent fields, but flag is_independent_adult = true
+    is_independent_adult: isIndependentAdult,
+    parent_name: isIndependentAdult ? null : (data.parentName || null),
+    parent_email: isIndependentAdult ? null : (data.parentEmail || null),
+    parent_phone: isIndependentAdult ? null : (data.parentPhone || null),
+    parent_relationship: isIndependentAdult ? null : (data.parentRelationship || null),
     learning_goals: data.learningGoals,
     interests: data.interests,
     learning_preference: data.learningPreference,
@@ -156,7 +160,8 @@ export async function fetchProfiles(): Promise<OnboardingData[]> {
     educationLevel: row.education_level || '',
     fieldOfStudy: row.field_of_study || '',
     institution: row.institution || '',
-    parentName: row.parent_name || '',
+    // If is_independent_adult flag is set, restore the 'SKIPPED' sentinel value for frontend logic
+    parentName: row.is_independent_adult ? 'SKIPPED' : (row.parent_name || ''),
     parentEmail: row.parent_email || '',
     parentPhone: row.parent_phone || '',
     parentRelationship: row.parent_relationship || '',
@@ -239,10 +244,18 @@ export async function updateProfile(
   if (updates.educationLevel !== undefined) payload.education_level = updates.educationLevel;
   if (updates.fieldOfStudy !== undefined) payload.field_of_study = updates.fieldOfStudy;
   if (updates.institution !== undefined) payload.institution = updates.institution;
-  if (updates.parentName !== undefined) payload.parent_name = updates.parentName;
-  if (updates.parentEmail !== undefined) payload.parent_email = updates.parentEmail;
-  if (updates.parentPhone !== undefined) payload.parent_phone = updates.parentPhone;
-  if (updates.parentRelationship !== undefined) payload.parent_relationship = updates.parentRelationship;
+  if (updates.parentName !== undefined) {
+    const isIndependent = updates.parentName === 'SKIPPED';
+    payload.is_independent_adult = isIndependent;
+    payload.parent_name = isIndependent ? null : (updates.parentName || null);
+    payload.parent_email = isIndependent ? null : (updates.parentEmail ?? undefined);
+    payload.parent_phone = isIndependent ? null : (updates.parentPhone ?? undefined);
+    payload.parent_relationship = isIndependent ? null : (updates.parentRelationship ?? undefined);
+  } else {
+    if (updates.parentEmail !== undefined) payload.parent_email = updates.parentEmail;
+    if (updates.parentPhone !== undefined) payload.parent_phone = updates.parentPhone;
+    if (updates.parentRelationship !== undefined) payload.parent_relationship = updates.parentRelationship;
+  }
   if (updates.learningGoals !== undefined) payload.learning_goals = updates.learningGoals;
   if (updates.interests !== undefined) payload.interests = updates.interests;
   if (updates.learningPreference !== undefined) payload.learning_preference = updates.learningPreference;

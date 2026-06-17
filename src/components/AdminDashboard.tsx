@@ -66,6 +66,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
   // Sidebar tab navigation
   const [activeSidebarTab, setActiveSidebarTab] = useState<'overview' | 'kpis' | 'analytics' | 'insights' | 'students' | 'parents' | 'courses' | 'assessments' | 'certificates' | 'content' | 'notifications' | 'reports' | 'revenue' | 'settings' | 'admins'>('overview');
 
+  // Parent search query
+  const [parentSearchQuery, setParentSearchQuery] = useState<string>('');
+
   // Selected row for active highlight style
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
@@ -109,6 +112,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
 
   // Profile detail overlay state
   const [selectedStudentDetail, setSelectedStudentDetail] = useState<OnboardingData | null>(null);
+  const [isAiDrawerOpen, setIsAiDrawerOpen] = useState<boolean>(false);
 
   // ==========================================
   // MODULE 2 MOCK STATE ENGINES
@@ -761,169 +765,169 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
   };
 
   return (
-    <div className="w-full max-w-6xl h-[680px] bg-[#F8FAFC] rounded-[32px] border border-slate-200 shadow-2xl flex overflow-hidden font-sans select-none relative animate-fadeIn">
+    <div className="w-full h-screen bg-[#F8FAFC] flex overflow-hidden font-sans select-none relative z-10 animate-fadeIn admin-dashboard-root">
       
       {/* ======================================================== */}
       {/* 1. LEFT SIDEBAR (Fully Grouped SaaS Layout)             */}
       {/* ======================================================== */}
-      <div className="w-[185px] bg-slate-900 shrink-0 py-5 flex flex-col justify-between text-white relative">
-        <div className="w-full space-y-4">
+      <div className="w-[230px] bg-slate-900 shrink-0 py-6 flex flex-col justify-between text-white relative">
+        <div className="w-full space-y-5">
           
-          <div className="flex items-center gap-2 pl-4 select-none">
-            <div className="w-6.5 h-6.5 rounded-lg bg-blue-600 flex items-center justify-center text-white font-black text-xs shadow-md">
+          <div className="flex items-center gap-3 pl-5 select-none">
+            <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center text-white font-black text-sm shadow-md">
               E
             </div>
-            <span className="font-bold text-xs tracking-tight text-white">eOnboard Control</span>
+            <span className="font-bold text-sm tracking-tight text-white">eOnboard Control</span>
           </div>
 
-          <div className="w-full space-y-3 px-1.5 overflow-y-auto max-h-[460px] custom-scrollbar">
+          <div className="w-full space-y-4 px-2 overflow-y-auto max-h-[calc(100vh-160px)] custom-scrollbar">
             
             {/* GROUP A: DASHBOARDS */}
             <div>
-              <div className="text-[8px] font-bold text-slate-500 uppercase tracking-widest pl-2 mb-1">DASHBOARDS</div>
+              <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider pl-3 mb-1.5">DASHBOARDS</div>
               <button 
                 onClick={() => setActiveSidebarTab('overview')}
-                className={`w-full flex items-center gap-2 px-2 py-1 text-[10.5px] font-semibold rounded-lg transition-all text-left cursor-pointer ${
+                className={`w-full flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all text-left cursor-pointer ${
                   activeSidebarTab === 'overview' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800'
                 }`}
               >
-                <LayoutDashboard className="w-3.5 h-3.5" />
+                <LayoutDashboard className="w-4 h-4" />
                 Overview Home
               </button>
               <button 
                 onClick={() => setActiveSidebarTab('kpis')}
-                className={`w-full flex items-center gap-2 px-2 py-1 text-[10.5px] font-semibold rounded-lg transition-all text-left cursor-pointer ${
+                className={`w-full flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all text-left cursor-pointer ${
                   activeSidebarTab === 'kpis' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800'
                 }`}
               >
-                <TrendingUp className="w-3.5 h-3.5" />
+                <TrendingUp className="w-4 h-4" />
                 KPI Overview
               </button>
               <button 
                 onClick={() => setActiveSidebarTab('analytics')}
-                className={`w-full flex items-center gap-2 px-2 py-1 text-[10.5px] font-semibold rounded-lg transition-all text-left cursor-pointer ${
+                className={`w-full flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all text-left cursor-pointer ${
                   activeSidebarTab === 'analytics' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800'
                 }`}
               >
-                <BarChart3 className="w-3.5 h-3.5" />
+                <BarChart3 className="w-4 h-4" />
                 Analytics Center
               </button>
               <button 
                 onClick={() => setActiveSidebarTab('insights')}
-                className={`w-full flex items-center gap-2 px-2 py-1 text-[10.5px] font-semibold rounded-lg transition-all text-left cursor-pointer ${
+                className={`w-full flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all text-left cursor-pointer ${
                   activeSidebarTab === 'insights' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800'
                 }`}
               >
-                <Brain className="w-3.5 h-3.5" />
+                <Brain className="w-4 h-4" />
                 AI Insights
               </button>
             </div>
 
             {/* GROUP B: MANAGEMENT */}
             <div>
-              <div className="text-[8px] font-bold text-slate-500 uppercase tracking-widest pl-2 mb-1">LEARNING & USERS</div>
+              <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider pl-3 mb-1.5">LEARNING & USERS</div>
               <button 
                 onClick={() => setActiveSidebarTab('students')}
-                className={`w-full flex items-center gap-2 px-2 py-1 text-[10.5px] font-semibold rounded-lg transition-all text-left cursor-pointer ${
+                className={`w-full flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all text-left cursor-pointer ${
                   activeSidebarTab === 'students' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800'
                 }`}
               >
-                <Users className="w-3.5 h-3.5" />
+                <Users className="w-4 h-4" />
                 Students
               </button>
               <button 
                 onClick={() => setActiveSidebarTab('parents')}
-                className={`w-full flex items-center gap-2 px-2 py-1 text-[10.5px] font-semibold rounded-lg transition-all text-left cursor-pointer ${
+                className={`w-full flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all text-left cursor-pointer ${
                   activeSidebarTab === 'parents' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800'
                 }`}
               >
-                <UserCheck className="w-3.5 h-3.5" />
+                <UserCheck className="w-4 h-4" />
                 Parents
               </button>
               <button 
                 onClick={() => setActiveSidebarTab('courses')}
-                className={`w-full flex items-center gap-2 px-2 py-1 text-[10.5px] font-semibold rounded-lg transition-all text-left cursor-pointer ${
+                className={`w-full flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all text-left cursor-pointer ${
                   activeSidebarTab === 'courses' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800'
                 }`}
               >
-                <BookOpen className="w-3.5 h-3.5" />
+                <BookOpen className="w-4 h-4" />
                 Courses
               </button>
               <button 
                 onClick={() => setActiveSidebarTab('assessments')}
-                className={`w-full flex items-center gap-2 px-2 py-1 text-[10.5px] font-semibold rounded-lg transition-all text-left cursor-pointer ${
+                className={`w-full flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all text-left cursor-pointer ${
                   activeSidebarTab === 'assessments' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800'
                 }`}
               >
-                <FileText className="w-3.5 h-3.5" />
+                <FileText className="w-4 h-4" />
                 Assessments
               </button>
               <button 
                 onClick={() => setActiveSidebarTab('certificates')}
-                className={`w-full flex items-center gap-2 px-2 py-1 text-[10.5px] font-semibold rounded-lg transition-all text-left cursor-pointer ${
+                className={`w-full flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all text-left cursor-pointer ${
                   activeSidebarTab === 'certificates' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800'
                 }`}
               >
-                <Award className="w-3.5 h-3.5" />
+                <Award className="w-4 h-4" />
                 Certificates
               </button>
             </div>
 
             {/* GROUP C: SYSTEM CONTROL */}
             <div>
-              <div className="text-[8px] font-bold text-slate-500 uppercase tracking-widest pl-2 mb-1">SYSTEM CONTROL</div>
+              <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider pl-3 mb-1.5">SYSTEM CONTROL</div>
               <button 
                 onClick={() => setActiveSidebarTab('content')}
-                className={`w-full flex items-center gap-2 px-2 py-1 text-[10.5px] font-semibold rounded-lg transition-all text-left cursor-pointer ${
+                className={`w-full flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all text-left cursor-pointer ${
                   activeSidebarTab === 'content' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800'
                 }`}
               >
-                <FileText className="w-3.5 h-3.5" />
+                <FileText className="w-4 h-4" />
                 Content Library
               </button>
               <button 
                 onClick={() => setActiveSidebarTab('notifications')}
-                className={`w-full flex items-center gap-2 px-2 py-1 text-[10.5px] font-semibold rounded-lg transition-all text-left cursor-pointer ${
+                className={`w-full flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all text-left cursor-pointer ${
                   activeSidebarTab === 'notifications' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800'
                 }`}
               >
-                <Bell className="w-3.5 h-3.5" />
+                <Bell className="w-4 h-4" />
                 Notifications Center
               </button>
               <button 
                 onClick={() => setActiveSidebarTab('reports')}
-                className={`w-full flex items-center gap-2 px-2 py-1 text-[10.5px] font-semibold rounded-lg transition-all text-left cursor-pointer ${
+                className={`w-full flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all text-left cursor-pointer ${
                   activeSidebarTab === 'reports' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800'
                 }`}
               >
-                <Download className="w-3.5 h-3.5" />
+                <Download className="w-4 h-4" />
                 Reports & Export
               </button>
               <button 
                 onClick={() => setActiveSidebarTab('revenue')}
-                className={`w-full flex items-center gap-2 px-2 py-1 text-[10.5px] font-semibold rounded-lg transition-all text-left cursor-pointer ${
+                className={`w-full flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all text-left cursor-pointer ${
                   activeSidebarTab === 'revenue' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800'
                 }`}
               >
-                <CreditCard className="w-3.5 h-3.5" />
+                <CreditCard className="w-4 h-4" />
                 Revenue
               </button>
               <button 
                 onClick={() => setActiveSidebarTab('settings')}
-                className={`w-full flex items-center gap-2 px-2 py-1 text-[10.5px] font-semibold rounded-lg transition-all text-left cursor-pointer ${
+                className={`w-full flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all text-left cursor-pointer ${
                   activeSidebarTab === 'settings' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800'
                 }`}
               >
-                <Settings className="w-3.5 h-3.5" />
+                <Settings className="w-4 h-4" />
                 Settings & Control
               </button>
               <button 
                 onClick={() => setActiveSidebarTab('admins')}
-                className={`w-full flex items-center gap-2 px-2 py-1 text-[10.5px] font-semibold rounded-lg transition-all text-left cursor-pointer ${
+                className={`w-full flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all text-left cursor-pointer ${
                   activeSidebarTab === 'admins' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800'
                 }`}
               >
-                <ShieldCheck className="w-3.5 h-3.5" />
+                <ShieldCheck className="w-4 h-4" />
                 Admin Management
               </button>
             </div>
@@ -931,25 +935,68 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
             <div className="pt-2 border-t border-slate-800">
               <button 
                 onClick={onBackToOnboarding}
-                className="w-full flex items-center gap-2 px-2.5 py-1.5 text-[10.5px] font-semibold rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-all text-left cursor-pointer"
+                className="w-full flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-all text-left cursor-pointer"
               >
-                <ArrowLeft className="w-3.5 h-3.5" />
+                <ArrowLeft className="w-4 h-4" />
                 User Setup
               </button>
             </div>
           </div>
         </div>
 
-        <div className="px-4 select-none space-y-1 shrink-0">
-          <div className="text-[8px] text-slate-500 font-mono tracking-widest font-bold uppercase">MODULE 3</div>
-          <div className="text-[10px] text-slate-400 font-semibold">Platform & Control</div>
+        <div className="px-5 select-none space-y-1 shrink-0">
+          <div className="text-[9px] text-slate-500 font-mono tracking-wider font-bold uppercase">MODULE 3</div>
+          <div className="text-[11px] text-slate-400 font-semibold">Platform & Control</div>
         </div>
       </div>
 
       {/* ======================================================== */}
       {/* 2. MAIN WORKSPACE CONTAINER                             */}
       {/* ======================================================== */}
-      <div className="flex-1 flex flex-col justify-between overflow-hidden relative">
+      <div className="flex-1 flex flex-col overflow-hidden relative">
+        
+        {/* Global Dashboard Top Bar */}
+        <div className="h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between shrink-0 select-none z-20 shadow-sm text-left">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-mono tracking-widest text-slate-400 font-bold uppercase">Control Panel</span>
+            <span className="text-slate-300 font-bold">/</span>
+            <span className="text-sm font-bold text-slate-700 capitalize">
+              {activeSidebarTab === 'overview' && 'Overview Home'}
+              {activeSidebarTab === 'kpis' && 'KPI Overview'}
+              {activeSidebarTab === 'analytics' && 'Analytics Center'}
+              {activeSidebarTab === 'insights' && 'AI Insights'}
+              {activeSidebarTab === 'students' && 'Student Directory'}
+              {activeSidebarTab === 'parents' && 'Parents Directory'}
+              {activeSidebarTab === 'courses' && 'Course Management'}
+              {activeSidebarTab === 'assessments' && 'Assessment Center'}
+              {activeSidebarTab === 'certificates' && 'Certificate Verification'}
+              {activeSidebarTab === 'content' && 'Content Library'}
+              {activeSidebarTab === 'notifications' && 'Notifications Center'}
+              {activeSidebarTab === 'reports' && 'Reports & Exports'}
+              {activeSidebarTab === 'revenue' && 'Revenue Analytics'}
+              {activeSidebarTab === 'settings' && 'System Settings'}
+              {activeSidebarTab === 'admins' && 'Admin Permissions'}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-4">
+            {/* Sync State Status */}
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-500">
+              <span className={`w-2 h-2 rounded-full ${syncState === 'synced' ? 'bg-emerald-500' : syncState === 'syncing' ? 'bg-blue-500 animate-ping' : 'bg-amber-505'}`} />
+              <span className="capitalize">{syncState === 'synced' ? 'Synced' : syncState === 'syncing' ? 'Syncing...' : 'Offline'}</span>
+            </div>
+
+            {/* Reload Data Button */}
+            <button
+              onClick={loadData}
+              disabled={loading}
+              className={`flex items-center gap-2 px-3.5 py-2 bg-slate-50 hover:bg-slate-100 disabled:opacity-50 text-slate-650 border border-slate-200 rounded-xl text-xs font-bold transition-all cursor-pointer ${loading ? 'opacity-80' : ''}`}
+            >
+              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-blue-600' : 'text-slate-500'}`} />
+              <span>{loading ? 'Reloading...' : 'Reload Data'}</span>
+            </button>
+          </div>
+        </div>
         
         {/* ========================================== */}
         {/* MODULE 1 DASHBOARD HOME (OVERVIEW)         */}
@@ -1133,9 +1180,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
                         "Platform engagement is healthy. Found {studentsAtRisk.length} active draft setups stalled before guardian linkage (Step 4). Recommended intervention: Dispatch SMS alerts with guardian explainer modules."
                       </p>
                     </div>
-                    <div className="text-[9px] font-bold text-blue-600 hover:underline cursor-pointer flex items-center gap-1 border-t border-slate-100 pt-2.5 mt-2.5">
+                    <div 
+                      onClick={() => setIsAiDrawerOpen(true)}
+                      className="text-[9px] font-bold text-blue-600 hover:underline cursor-pointer flex items-center gap-1 border-t border-slate-100 pt-2.5 mt-2.5"
+                    >
                       Open AI Actions Drawer
-                      <ArrowUpRight className="w-3 h-3" />
+                      <ArrowUpRight className="w-3.5 h-3.5" />
                     </div>
                   </div>
                 </div>
@@ -1310,38 +1360,74 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
         {/* STUDENTS MANAGEMENT VIEW                   */}
         {/* ========================================== */}
         {activeSidebarTab === 'students' && (
-          <div className="flex-1 bg-white p-6 flex flex-col justify-between overflow-hidden relative text-left">
+          <div className="flex-1 bg-white p-8 flex flex-col justify-between overflow-hidden relative text-left">
             <div className="space-y-4 shrink-0">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-lg font-bold text-slate-900 font-display">Student Directory</h2>
-                  <p className="text-xs text-slate-400 mt-0.5 font-medium">{totalStudents} active learner profiles</p>
+                  <h2 className="text-2xl font-black text-slate-900 font-display">Student Directory</h2>
+                  <p className="text-sm text-slate-400 mt-1 font-semibold">{totalStudents} active learner profiles</p>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                <div className="flex gap-5 text-xs font-semibold text-slate-400">
-                  <button onClick={() => { setActiveTab('all'); setCurrentPage(1); }} className={`pb-1 relative ${activeTab === 'all' ? 'text-slate-900 font-bold' : 'hover:text-slate-650'}`}>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-3">
+                <div className="flex gap-6 text-sm font-bold text-slate-400">
+                  <button onClick={() => { setActiveTab('all'); setCurrentPage(1); }} className={`pb-2.5 relative cursor-pointer ${activeTab === 'all' ? 'text-slate-900 font-extrabold' : 'hover:text-slate-650'}`}>
                     All Learners
-                    {activeTab === 'all' && <div className="absolute bottom-[-13px] left-0 right-0 h-[3px] bg-blue-600 rounded-full" />}
+                    {activeTab === 'all' && <div className="absolute bottom-[-1px] left-0 right-0 h-[3px] bg-blue-600 rounded-full" />}
                   </button>
-                  <button onClick={() => { setActiveTab('in_progress'); setCurrentPage(1); }} className={`pb-1 relative ${activeTab === 'in_progress' ? 'text-slate-900 font-bold' : 'hover:text-slate-650'}`}>
+                  <button onClick={() => { setActiveTab('in_progress'); setCurrentPage(1); }} className={`pb-2.5 relative cursor-pointer ${activeTab === 'in_progress' ? 'text-slate-900 font-extrabold' : 'hover:text-slate-650'}`}>
                     In Progress
-                    {activeTab === 'in_progress' && <div className="absolute bottom-[-13px] left-0 right-0 h-[3px] bg-blue-600 rounded-full" />}
+                    {activeTab === 'in_progress' && <div className="absolute bottom-[-1px] left-0 right-0 h-[3px] bg-blue-600 rounded-full" />}
                   </button>
-                  <button onClick={() => { setActiveTab('completed'); setCurrentPage(1); }} className={`pb-1 relative ${activeTab === 'completed' ? 'text-slate-900 font-bold' : 'hover:text-slate-650'}`}>
+                  <button onClick={() => { setActiveTab('completed'); setCurrentPage(1); }} className={`pb-2.5 relative cursor-pointer ${activeTab === 'completed' ? 'text-slate-900 font-extrabold' : 'hover:text-slate-650'}`}>
                     Fully Onboarded
-                    {activeTab === 'completed' && <div className="absolute bottom-[-13px] left-0 right-0 h-[3px] bg-blue-600 rounded-full" />}
+                    {activeTab === 'completed' && <div className="absolute bottom-[-1px] left-0 right-0 h-[3px] bg-blue-600 rounded-full" />}
                   </button>
+                </div>
+
+                {/* SEARCH BOX & BULK ACTIONS FOR STUDENTS */}
+                <div className="flex items-center gap-3 w-full sm:w-auto">
+                  {selectedIds.length > 0 && (
+                    <button
+                      onClick={() => setShowBulkDeleteModal(true)}
+                      className="flex items-center gap-1.5 px-3 py-2 bg-rose-50 hover:bg-rose-105 text-rose-750 border border-rose-200 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-sm shrink-0"
+                    >
+                      <Trash2 className="w-4 h-4 text-rose-650" />
+                      <span>Delete Selected ({selectedIds.length})</span>
+                    </button>
+                  )}
+                  
+                  <div className="relative w-full sm:w-72">
+                    <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                    <input
+                      type="text"
+                      placeholder="Search students..."
+                      value={searchQuery}
+                      onChange={(e) => {
+                        setSearchQuery(e.target.value);
+                        setCurrentPage(1);
+                      }}
+                      className="w-full pl-9 pr-4 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 bg-slate-50/50 hover:bg-slate-50 focus:bg-white transition-all font-semibold placeholder:text-slate-400"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div className="flex-grow overflow-y-auto py-3 space-y-2.5 custom-scrollbar min-h-0">
-              <div className="grid grid-cols-12 px-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+            <div className="flex-grow overflow-y-auto py-4 space-y-3 custom-scrollbar min-h-0">
+              <div className="grid grid-cols-12 px-4 text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                <div className="col-span-1 flex items-center justify-center">
+                  <input
+                    type="checkbox"
+                    ref={masterCheckboxRef}
+                    checked={isAllPageSelected}
+                    onChange={handleToggleSelectAllPage}
+                    className="rounded border-slate-350 text-blue-600 w-4.5 h-4.5 cursor-pointer"
+                  />
+                </div>
                 <div className="col-span-3">Student Name</div>
                 <div className="col-span-2">Engagement</div>
-                <div className="col-span-3">Study Field / Goal</div>
+                <div className="col-span-2">Study Field / Goal</div>
                 <div className="col-span-3">Status Progress</div>
                 <div className="col-span-1 text-center">Profile</div>
               </div>
@@ -1350,44 +1436,60 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
                 const stepLocation = p.step || 1;
                 const score = stepLocation * 10;
                 return (
-                  <div key={p.id} className="grid grid-cols-12 items-center px-3 py-2.5 rounded-xl border border-slate-100 bg-slate-50/40 hover:border-slate-200">
-                    <div className="col-span-3 flex items-center gap-2 truncate">
-                      <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 shrink-0 border border-slate-200">
-                        <User className="w-4.5 h-4.5" />
+                  <div 
+                    key={p.id} 
+                    className={`grid grid-cols-12 items-center px-4 py-3.5 rounded-2xl border transition-all ${
+                      selectedIds.includes(p.id || '')
+                        ? 'border-blue-300 bg-blue-50/10'
+                        : 'border-slate-100 bg-slate-50/20 hover:border-slate-300 hover:shadow-sm'
+                    }`}
+                  >
+                    <div className="col-span-1 flex items-center justify-center">
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.includes(p.id || '')}
+                        onChange={() => handleToggleSelect(p.id || '')}
+                        className="rounded border-slate-350 text-blue-600 w-4.5 h-4.5 cursor-pointer"
+                      />
+                    </div>
+                    
+                    <div className="col-span-3 flex items-center gap-3 truncate">
+                      <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 shrink-0 border border-slate-200">
+                        <User className="w-5 h-5" />
                       </div>
-                      <div className="truncate">
-                        <div className="text-xs font-bold text-slate-950">{p.fullName || 'Anonymous'}</div>
-                        <div className="text-[10px] text-slate-450 font-mono">ID: {p.id?.slice(0, 8)}...</div>
+                      <div className="truncate text-left">
+                        <div className="text-sm font-bold text-slate-900 leading-tight">{p.fullName || 'Anonymous'}</div>
+                        <div className="text-xs text-slate-400 font-mono mt-0.5">ID: {p.id?.slice(0, 8)}...</div>
                       </div>
                     </div>
 
-                    <div className="col-span-2 flex items-center gap-1.5">
-                      <span className={`w-2 h-2 rounded-full ${score >= 70 ? 'bg-emerald-500' : score >= 40 ? 'bg-amber-500' : 'bg-rose-500'}`} />
-                      <span className="text-[11px] font-bold text-slate-700">{score}% Score</span>
+                    <div className="col-span-2 flex items-center gap-2">
+                      <span className={`w-2.5 h-2.5 rounded-full ${score >= 70 ? 'bg-emerald-500' : score >= 40 ? 'bg-amber-500' : 'bg-rose-500'}`} />
+                      <span className="text-xs font-extrabold text-slate-700">{score}% Score</span>
                     </div>
 
-                    <div className="col-span-3 text-[11px] font-semibold text-slate-655 truncate pr-2">
+                    <div className="col-span-2 text-xs font-bold text-slate-700 truncate pr-3 text-left">
                       <div>{p.fieldOfStudy || '—'}</div>
-                      <div className="text-[9.5px] text-slate-450 truncate font-sans">Goals: {p.learningGoals?.join(', ') || '—'}</div>
+                      <div className="text-xs text-slate-400 truncate font-sans mt-0.5">Goals: {p.learningGoals?.join(', ') || '—'}</div>
                     </div>
 
-                    <div className="col-span-3 pr-4">
-                      <div className="flex justify-between text-[9px] text-slate-400 font-bold mb-1">
+                    <div className="col-span-3 pr-4 text-left">
+                      <div className="flex justify-between text-xs text-slate-400 font-bold mb-1.5">
                         <span>Wizard Step {stepLocation}</span>
                         <span>{p.completed ? 'Finished' : `${stepLocation}0% Done`}</span>
                       </div>
-                      <div className="w-full bg-slate-200/80 h-1.5 rounded-full overflow-hidden">
-                        <div className="bg-blue-600 h-1.5 rounded-full" style={{ width: `${stepLocation * 10}%` }} />
+                      <div className="w-full bg-slate-200/80 h-2 rounded-full overflow-hidden">
+                        <div className="bg-blue-600 h-2 rounded-full" style={{ width: `${stepLocation * 10}%` }} />
                       </div>
                     </div>
 
                     <div className="col-span-1 flex justify-center">
                       <button 
                         onClick={() => setSelectedStudentDetail(p)}
-                        className="p-1 border border-slate-200 rounded-lg hover:bg-slate-100 hover:text-blue-600 text-slate-500 transition-colors cursor-pointer"
+                        className="p-1.5 border border-slate-200 rounded-xl hover:bg-slate-100 hover:text-blue-600 text-slate-500 transition-colors cursor-pointer"
                         title="View Full Profile"
                       >
-                        <Settings className="w-3.5 h-3.5" />
+                        <Settings className="w-4 h-4" />
                       </button>
                     </div>
                   </div>
@@ -1395,8 +1497,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
               })}
             </div>
 
-            <div className="flex items-center justify-between border-t border-slate-100 pt-3.5 shrink-0 select-none">
-              <span className="text-[10px] text-slate-400 font-mono font-bold">
+            <div className="flex items-center justify-between border-t border-slate-100 pt-4 shrink-0 select-none">
+              <span className="text-xs text-slate-400 font-mono font-bold">
                 Showing {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, totalItems)} of {totalItems} profiles
               </span>
               <div className="flex items-center gap-2">
@@ -1413,55 +1515,123 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
         {/* ========================================== */}
         {/* PARENTS MANAGEMENT VIEW                    */}
         {/* ========================================== */}
-        {activeSidebarTab === 'parents' && (
-          <div className="flex-1 bg-white p-6 flex flex-col justify-between overflow-hidden relative text-left">
-            <div className="space-y-2 shrink-0 border-b border-slate-100 pb-3">
-              <h2 className="text-lg font-bold text-slate-900 font-display">Parents Directory</h2>
-              <p className="text-xs text-slate-400 font-medium">{parentsList.length} linked parent profiles</p>
-            </div>
+        {activeSidebarTab === 'parents' && (() => {
+          // Filter parents by search query
+          const allParentsAndIndependent = profiles.filter(p => p.parentName);
+          const independentAdults = profiles.filter(p => p.parentName === 'SKIPPED');
+          const filteredParentsList = allParentsAndIndependent.filter(p => {
+            const q = parentSearchQuery.toLowerCase().trim();
+            if (!q) return true;
+            return (
+              (p.parentName && p.parentName.toLowerCase().includes(q)) ||
+              (p.fullName && p.fullName.toLowerCase().includes(q)) ||
+              (p.parentEmail && p.parentEmail.toLowerCase().includes(q)) ||
+              (p.parentPhone && p.parentPhone.toLowerCase().includes(q))
+            );
+          });
 
-            <div className="flex-grow overflow-y-auto py-3 space-y-2.5 custom-scrollbar min-h-0">
-              <div className="grid grid-cols-12 px-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
-                <div className="col-span-3">Parent Name</div>
-                <div className="col-span-3">Linked Learner</div>
-                <div className="col-span-3">Contact Email</div>
-                <div className="col-span-3">Relationship</div>
+          return (
+            <div className="flex-1 bg-white p-8 flex flex-col overflow-hidden relative text-left">
+              <div className="space-y-4 shrink-0">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-2xl font-black text-slate-900 font-display">Parents Directory</h2>
+                    <p className="text-sm text-slate-400 mt-1 font-semibold">{parentsList.length} linked parent profiles · {independentAdults.length} independent adults</p>
+                  </div>
+                </div>
+
+                {/* Search + Filter Bar */}
+                <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
+                  <div className="relative flex-1 max-w-sm">
+                    <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                    <input
+                      type="text"
+                      placeholder="Search by parent name, email, phone..."
+                      value={parentSearchQuery}
+                      onChange={(e) => setParentSearchQuery(e.target.value)}
+                      className="w-full pl-9 pr-4 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 bg-slate-50/50 hover:bg-slate-50 focus:bg-white transition-all font-semibold placeholder:text-slate-400"
+                    />
+                  </div>
+                  {parentSearchQuery && (
+                    <button
+                      onClick={() => setParentSearchQuery('')}
+                      className="text-xs font-bold text-slate-400 hover:text-slate-700 cursor-pointer"
+                    >
+                      Clear
+                    </button>
+                  )}
+                  <span className="text-xs font-mono font-bold text-slate-400 ml-auto">{filteredParentsList.length} results</span>
+                </div>
               </div>
 
-              {parentsList.length === 0 ? (
-                <div className="text-center py-20 text-slate-400 text-xs font-semibold">
-                  No linked parents found in database profiles.
+              <div className="flex-grow overflow-y-auto py-4 space-y-3 custom-scrollbar min-h-0">
+                <div className="grid grid-cols-12 px-4 text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                  <div className="col-span-3">Parent Name</div>
+                  <div className="col-span-3">Linked Learner</div>
+                  <div className="col-span-3">Contact Email</div>
+                  <div className="col-span-3">Relationship</div>
                 </div>
-              ) : (
-                parentsList.map(p => (
-                  <div key={p.id} className="grid grid-cols-12 items-center px-3 py-2.5 rounded-xl border border-slate-100 bg-slate-50/40">
-                    <div className="col-span-3 flex items-center gap-2 truncate">
-                      <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 shrink-0 border border-slate-200">
-                        <UserCheck className="w-4 h-4 text-blue-600" />
-                      </div>
-                      <div className="truncate">
-                        <div className="text-xs font-bold text-slate-950">{p.parentName}</div>
-                        <div className="text-[10px] text-slate-450 font-mono">{p.parentPhone || 'No phone'}</div>
-                      </div>
-                    </div>
 
-                    <div className="col-span-3 text-xs font-bold text-slate-800 truncate">
-                      {p.fullName || 'Anonymous Student'}
-                    </div>
-
-                    <div className="col-span-3 text-[11px] font-semibold text-slate-650 truncate font-mono">
-                      {p.parentEmail || '—'}
-                    </div>
-
-                    <div className="col-span-3 capitalize text-[10.5px] font-bold text-slate-700">
-                      <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full text-[9px] uppercase font-black tracking-wider">{p.parentRelationship || 'guardian'}</span>
-                    </div>
+                {filteredParentsList.length === 0 ? (
+                  <div className="text-center py-20 text-slate-450 text-sm font-semibold">
+                    {parentSearchQuery ? `No results for "${parentSearchQuery}"` : 'No linked parents found in database profiles.'}
                   </div>
-                ))
-              )}
+                ) : (
+                  filteredParentsList.map(p => {
+                    const isIndependent = p.parentName === 'SKIPPED';
+                    return (
+                      <div key={p.id} className={`grid grid-cols-12 items-center px-4 py-3.5 rounded-2xl border transition-all ${
+                        isIndependent
+                          ? 'border-amber-100 bg-amber-50/20 hover:border-amber-200'
+                          : 'border-slate-100 bg-slate-50/20 hover:border-slate-350 hover:shadow-sm'
+                      }`}>
+                        <div className="col-span-3 flex items-center gap-3 truncate text-left">
+                          <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 border ${
+                            isIndependent ? 'bg-amber-50 border-amber-200' : 'bg-slate-100 border-slate-200'
+                          }`}>
+                            {isIndependent
+                              ? <User className="w-5 h-5 text-amber-600" />
+                              : <UserCheck className="w-5 h-5 text-blue-600" />
+                            }
+                          </div>
+                          <div className="truncate">
+                            {isIndependent ? (
+                              <>
+                                <div className="text-sm font-bold text-amber-700 leading-tight">Independent Adult</div>
+                                <div className="text-xs text-amber-500 font-semibold mt-0.5">No guardian linked</div>
+                              </>
+                            ) : (
+                              <>
+                                <div className="text-sm font-bold text-slate-900 leading-tight">{p.parentName}</div>
+                                <div className="text-xs text-slate-400 font-mono mt-0.5">{p.parentPhone || 'No phone'}</div>
+                              </>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="col-span-3 text-sm font-bold text-slate-750 truncate text-left">
+                          {p.fullName || 'Anonymous Student'}
+                        </div>
+
+                        <div className="col-span-3 text-xs font-semibold text-slate-650 truncate font-mono text-left">
+                          {isIndependent ? <span className="text-amber-500 font-semibold">—</span> : (p.parentEmail || '—')}
+                        </div>
+
+                        <div className="col-span-3 capitalize text-xs font-bold text-slate-700 text-left">
+                          {isIndependent ? (
+                            <span className="bg-amber-50 text-amber-700 px-2.5 py-1 rounded-lg text-[10px] uppercase font-black tracking-wider">Independent</span>
+                          ) : (
+                            <span className="bg-blue-50 text-blue-700 px-2.5 py-1 rounded-lg text-[10px] uppercase font-black tracking-wider">{p.parentRelationship || 'guardian'}</span>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
 
         {/* ========================================== */}
         {/* COURSE MANAGEMENT VIEW                     */}
@@ -2709,6 +2879,115 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
                 {isBulkDeleting && <div className="w-3.5 h-3.5 rounded-full border border-white border-t-transparent animate-spin" />}
                 Delete
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ======================================================== */}
+      {/* 7. AI ACTIONS DRAWER PANEL                               */}
+      {/* ======================================================== */}
+      {isAiDrawerOpen && (
+        <div 
+          className="absolute inset-0 bg-slate-950/60 z-50 flex justify-end pointer-events-auto cursor-pointer animate-fadeIn"
+          onClick={() => setIsAiDrawerOpen(false)}
+        >
+          <div 
+            onClick={e => e.stopPropagation()}
+            className="w-full max-w-[360px] h-full bg-white border-l border-slate-200 p-6 overflow-y-auto custom-scrollbar flex flex-col justify-between text-left cursor-default"
+          >
+            <div className="space-y-6">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3 shrink-0">
+                <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2 font-display">
+                  <Sparkles className="w-4.5 h-4.5 text-blue-600 animate-pulse" />
+                  AI Agent Actions Desk
+                </h3>
+                <button 
+                  onClick={() => setIsAiDrawerOpen(false)}
+                  className="text-xs font-bold text-slate-450 hover:text-slate-650 cursor-pointer"
+                >
+                  Close
+                </button>
+              </div>
+
+              {/* Summary and Recommendations */}
+              <div className="space-y-4 font-sans">
+                <div className="bg-blue-50/50 border border-blue-100 rounded-2xl p-4">
+                  <h4 className="text-xs font-bold text-blue-800 uppercase tracking-wide">Automated Diagnostic</h4>
+                  <p className="text-xs text-slate-600 leading-relaxed mt-2">
+                    Our AI models monitor learner progression. Here are priority tasks proposed for system optimization based on live registration data.
+                  </p>
+                </div>
+
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Recommended Interventions</span>
+
+                <div className="space-y-3">
+                  {/* Action 1 */}
+                  <div className="bg-slate-50 border border-slate-150 rounded-2xl p-4 space-y-3">
+                    <div>
+                      <div className="text-xs font-bold text-slate-800">Dispatch Guardian Notifications</div>
+                      <p className="text-xs text-slate-500 mt-1">
+                        Trigger automated email reminders and explainer guides to guardians.
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => {
+                        showToast('Guardian notification sequence successfully launched!');
+                        addAuditLog('Triggered guardian notification campaign via AI Action Desk');
+                        setIsAiDrawerOpen(false);
+                      }}
+                      className="w-full py-2 bg-blue-600 hover:bg-blue-750 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-colors cursor-pointer shadow-sm"
+                    >
+                      Run Campaign
+                    </button>
+                  </div>
+
+                  {/* Action 2 */}
+                  <div className="bg-slate-50 border border-slate-150 rounded-2xl p-4 space-y-3">
+                    <div>
+                      <div className="text-xs font-bold text-slate-800">Prune Stalled Registrations</div>
+                      <p className="text-xs text-slate-500 mt-1">
+                        Identify and notify students stalled at setup stages 1-3 for more than 48 hours.
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => {
+                        showToast('Stalled registrations identified. Follow-up sequence sent.');
+                        addAuditLog('Executed stalled registrations prune & re-engagement filter');
+                        setIsAiDrawerOpen(false);
+                      }}
+                      className="w-full py-2 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-colors cursor-pointer shadow-sm"
+                    >
+                      Prune & Re-engage
+                    </button>
+                  </div>
+
+                  {/* Action 3 */}
+                  <div className="bg-slate-50 border border-slate-150 rounded-2xl p-4 space-y-3">
+                    <div>
+                      <div className="text-xs font-bold text-slate-800">Optimize Learning Paths</div>
+                      <p className="text-xs text-slate-500 mt-1">
+                        Dynamically adjust AI conceptual explainer prompts for current student cohort.
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => {
+                        showToast('AI Conceptual path parameters updated successfully.');
+                        addAuditLog('Re-calibrated AI conceptual pathways for cohorts');
+                        setIsAiDrawerOpen(false);
+                      }}
+                      className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-colors cursor-pointer shadow-sm"
+                    >
+                      Optimize Pathways
+                    </button>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+            <div className="text-[10px] text-slate-400 font-mono text-center pt-4 border-t border-slate-100 shrink-0">
+              AI Desk Sandbox v1.0
             </div>
           </div>
         </div>

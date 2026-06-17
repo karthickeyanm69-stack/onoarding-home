@@ -387,7 +387,7 @@ export default function App() {
     }
 
     return (
-      <div className="min-h-screen bg-slate-50 relative flex flex-col items-center justify-center p-3 sm:p-6 overflow-hidden">
+      <div className="min-h-screen w-screen bg-slate-50 relative flex flex-col overflow-hidden">
         {/* BACKGROUND FLOATING ORNAMENTAL BLUR BLOBS */}
         <div className="absolute top-[-50px] left-[-100px] w-[500px] h-[500px] bg-blue-200/40 rounded-full blur-3xl animate-blob-left pointer-events-none" />
         <div className="absolute bottom-[-100px] right-[-100px] w-[500px] h-[500px] bg-indigo-200/40 rounded-full blur-3xl animate-blob-right pointer-events-none" />

@@ -239,7 +239,32 @@ export const OnboardingStepRenderer: React.FC<StepRendererProps> = ({
           </div>
         </label>
 
-        {!isSkipped && (
+        {isSkipped ? (
+          <div className="animate-fadeIn space-y-3">
+            {/* Independent Adult Confirmation Card */}
+            <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl space-y-2">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
+                  <Shield className="w-4 h-4 text-amber-600" />
+                </div>
+                <div>
+                  <div className="text-xs font-extrabold text-amber-800">Independent Adult — No Guardian Required</div>
+                  <p className="text-[10px] text-amber-600 font-medium mt-0.5">Your account will be registered without a linked parent/guardian.</p>
+                </div>
+              </div>
+              <div className="border-t border-amber-200 pt-2.5 mt-2">
+                <p className="text-[10px] text-amber-700 leading-relaxed font-medium">
+                  As an independent adult learner, you take full responsibility for your learning journey. 
+                  Your profile will be saved with this status. You can still receive all AI personalization 
+                  and notification features in the next steps.
+                </p>
+              </div>
+            </div>
+            <p className="text-[10px] text-slate-400 font-medium px-1">
+              ✓ Your independent adult status will be stored securely. Click <strong>Next</strong> to continue.
+            </p>
+          </div>
+        ) : (
           <div className="space-y-4 animate-fadeIn">
             {/* Parent Name */}
             <div className="space-y-1.5">
