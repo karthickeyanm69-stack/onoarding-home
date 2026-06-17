@@ -402,7 +402,7 @@ export default function App() {
   }
 
   return (
-    <div className="h-screen w-screen bg-slate-50 flex flex-col overflow-hidden font-sans select-none animate-fadeIn">
+    <div className="h-screen w-screen bg-slate-50 flex flex-col overflow-hidden font-sans select-none animate-fadeIn onboarding-root">
       
       {/* 1. TOP UTILITY HEADER BAR */}
       <header className="h-16 bg-white border-b border-slate-200/80 px-4 md:px-6 flex items-center justify-between z-30 shrink-0 shadow-sm">
@@ -443,7 +443,7 @@ export default function App() {
       <div className="flex-1 bg-slate-100/60 flex items-center justify-center overflow-hidden relative p-4">
         
         {/* Simulated mobile phone preview chassis (matches uploaded frame) */}
-        <div className="w-full h-full sm:w-[375px] sm:h-[740px] sm:max-h-[96%] rounded-none sm:rounded-[48px] border-0 sm:border-[14px] border-slate-955 bg-white shadow-none sm:shadow-2xl flex flex-col overflow-hidden relative transition-all duration-300">
+        <div className="w-full h-full sm:w-[500px] sm:h-[840px] sm:max-h-[96%] rounded-none sm:rounded-[48px] border-0 sm:border-[14px] border-slate-955 bg-white shadow-none sm:shadow-2xl flex flex-col overflow-hidden relative transition-all duration-300">
           
           {/* Speaker Notch Bezel (visible on desktop frame) */}
           <div className="hidden sm:flex absolute top-0 left-1/2 -translate-x-1/2 w-32 h-4.5 bg-slate-950 rounded-b-2xl z-50 items-center justify-center">

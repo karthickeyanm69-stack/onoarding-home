@@ -137,153 +137,202 @@
 /* ======================================================== */
 /* ADMIN DASHBOARD COMPREHENSIVE VIEW SCALING SYSTEM        */
 /* ======================================================== */
-.admin-dashboard-root {
+.admin-dashboard-root,
+.onboarding-root {
   font-size: 14px !important;
 }
 
 /* Enlarge Typography Systematically */
 .admin-dashboard-root .text-\[8px\],
-.admin-dashboard-root .text-\[9px\] {
+.admin-dashboard-root .text-\[9px\],
+.onboarding-root .text-\[8px\],
+.onboarding-root .text-\[9px\] {
   font-size: 11px !important;
 }
 
 .admin-dashboard-root .text-\[10px\],
 .admin-dashboard-root .text-\[10\.5px\],
-.admin-dashboard-root .text-\[11px\] {
+.admin-dashboard-root .text-\[11px\],
+.onboarding-root .text-\[10px\],
+.onboarding-root .text-\[10\.5px\],
+.onboarding-root .text-\[11px\] {
   font-size: 13px !important;
 }
 
 .admin-dashboard-root .text-xs,
-.admin-dashboard-root .text-\[12px\] {
+.admin-dashboard-root .text-\[12px\],
+.onboarding-root .text-xs,
+.onboarding-root .text-\[12px\] {
   font-size: 14.5px !important;
 }
 
 .admin-dashboard-root .text-sm,
-.admin-dashboard-root .text-\[13px\] {
+.admin-dashboard-root .text-\[13px\],
+.onboarding-root .text-sm,
+.onboarding-root .text-\[13px\] {
   font-size: 16px !important;
 }
 
-.admin-dashboard-root .text-base {
+.admin-dashboard-root .text-base,
+.onboarding-root .text-base {
   font-size: 18px !important;
 }
 
-.admin-dashboard-root .text-lg {
+.admin-dashboard-root .text-lg,
+.onboarding-root .text-lg {
   font-size: 22px !important;
 }
 
-.admin-dashboard-root .text-xl {
+.admin-dashboard-root .text-xl,
+.onboarding-root .text-xl {
   font-size: 26px !important;
 }
 
-.admin-dashboard-root .text-2xl {
+.admin-dashboard-root .text-2xl,
+.onboarding-root .text-2xl {
   font-size: 30px !important;
 }
 
-.admin-dashboard-root .text-3xl {
+.admin-dashboard-root .text-3xl,
+.onboarding-root .text-3xl {
   font-size: 38px !important;
 }
 
 /* Enlarge Padding and Spacing Across Elements */
-.admin-dashboard-root .p-3 {
+.admin-dashboard-root .p-3,
+.onboarding-root .p-3 {
   padding: 1rem !important; /* 16px */
 }
-.admin-dashboard-root .p-4 {
+.admin-dashboard-root .p-4,
+.onboarding-root .p-4 {
   padding: 1.5rem !important; /* 24px */
 }
-.admin-dashboard-root .p-5 {
+.admin-dashboard-root .p-5,
+.onboarding-root .p-5 {
   padding: 1.75rem !important; /* 28px */
 }
-.admin-dashboard-root .p-6 {
+.admin-dashboard-root .p-6,
+.onboarding-root .p-6 {
   padding: 2.25rem !important; /* 36px */
 }
-.admin-dashboard-root .p-8 {
+.admin-dashboard-root .p-8,
+.onboarding-root .p-8 {
   padding: 2.5rem !important; /* 40px */
 }
-.admin-dashboard-root .py-2 {
+.admin-dashboard-root .py-2,
+.onboarding-root .py-2 {
   padding-top: 0.75rem !important;
   padding-bottom: 0.75rem !important;
 }
-.admin-dashboard-root .py-2\.5 {
+.admin-dashboard-root .py-2\.5,
+.onboarding-root .py-2\.5 {
   padding-top: 0.95rem !important;
   padding-bottom: 0.95rem !important;
 }
-.admin-dashboard-root .py-3 {
+.admin-dashboard-root .py-3,
+.onboarding-root .py-3 {
   padding-top: 1.125rem !important;
   padding-bottom: 1.125rem !important;
 }
-.admin-dashboard-root .px-3 {
+.admin-dashboard-root .px-3,
+.onboarding-root .px-3 {
   padding-left: 1rem !important;
   padding-right: 1rem !important;
 }
-.admin-dashboard-root .px-4 {
+.admin-dashboard-root .px-4,
+.onboarding-root .px-4 {
   padding-left: 1.5rem !important;
   padding-right: 1.5rem !important;
 }
-.admin-dashboard-root .gap-2 {
+.admin-dashboard-root .gap-2,
+.onboarding-root .gap-2 {
   gap: 0.75rem !important;
 }
-.admin-dashboard-root .gap-3 {
+.admin-dashboard-root .gap-3,
+.onboarding-root .gap-3 {
   gap: 1.125rem !important;
 }
-.admin-dashboard-root .gap-4 {
+.admin-dashboard-root .gap-4,
+.onboarding-root .gap-4 {
   gap: 1.375rem !important;
 }
-.admin-dashboard-root .space-y-2\.5 > :not([hidden]) ~ :not([hidden]) {
+.admin-dashboard-root .space-y-2\.5 > :not([hidden]) ~ :not([hidden]),
+.onboarding-root .space-y-2\.5 > :not([hidden]) ~ :not([hidden]) {
   margin-top: 0.875rem !important;
 }
-.admin-dashboard-root .space-y-3 > :not([hidden]) ~ :not([hidden]) {
+.admin-dashboard-root .space-y-3 > :not([hidden]) ~ :not([hidden]),
+.onboarding-root .space-y-3 > :not([hidden]) ~ :not([hidden]) {
   margin-top: 1rem !important;
 }
-.admin-dashboard-root .space-y-4 > :not([hidden]) ~ :not([hidden]) {
+.admin-dashboard-root .space-y-4 > :not([hidden]) ~ :not([hidden]),
+.onboarding-root .space-y-4 > :not([hidden]) ~ :not([hidden]) {
   margin-top: 1.375rem !important;
 }
 
 /* Scale Up Borders, Roundedness and Shadows */
-.admin-dashboard-root .rounded-xl {
+.admin-dashboard-root .rounded-xl,
+.onboarding-root .rounded-xl {
   border-radius: 1.125rem !important; /* 18px */
 }
-.admin-dashboard-root .rounded-2xl {
+.admin-dashboard-root .rounded-2xl,
+.onboarding-root .rounded-2xl {
   border-radius: 1.375rem !important; /* 22px */
 }
 
 /* Enlarge Interactive Icons */
 .admin-dashboard-root .w-3,
-.admin-dashboard-root .h-3 {
+.admin-dashboard-root .h-3,
+.onboarding-root .w-3,
+.onboarding-root .h-3 {
   width: 0.95rem !important;
   height: 0.95rem !important;
 }
 .admin-dashboard-root .w-3\.5,
-.admin-dashboard-root .h-3\.5 {
+.admin-dashboard-root .h-3\.5,
+.onboarding-root .w-3\.5,
+.onboarding-root .h-3\.5 {
   width: 1.05rem !important;
   height: 1.05rem !important;
 }
 .admin-dashboard-root .w-4,
-.admin-dashboard-root .h-4 {
+.admin-dashboard-root .h-4,
+.onboarding-root .w-4,
+.onboarding-root .h-4 {
   width: 1.2rem !important;
   height: 1.2rem !important;
 }
 .admin-dashboard-root .w-4\.5,
-.admin-dashboard-root .h-4\.5 {
+.admin-dashboard-root .h-4\.5,
+.onboarding-root .w-4\.5,
+.onboarding-root .h-4\.5 {
   width: 1.35rem !important;
   height: 1.35rem !important;
 }
 .admin-dashboard-root .w-5,
-.admin-dashboard-root .h-5 {
+.admin-dashboard-root .h-5,
+.onboarding-root .w-5,
+.onboarding-root .h-5 {
   width: 1.5rem !important;
   height: 1.5rem !important;
 }
 .admin-dashboard-root .w-6,
-.admin-dashboard-root .h-6 {
+.admin-dashboard-root .h-6,
+.onboarding-root .w-6,
+.onboarding-root .h-6 {
   width: 1.85rem !important;
   height: 1.85rem !important;
 }
 .admin-dashboard-root .w-7,
-.admin-dashboard-root .h-7 {
+.admin-dashboard-root .h-7,
+.onboarding-root .w-7,
+.onboarding-root .h-7 {
   width: 2.35rem !important;
   height: 2.35rem !important;
 }
 .admin-dashboard-root .w-8,
-.admin-dashboard-root .h-8 {
+.admin-dashboard-root .h-8,
+.onboarding-root .w-8,
+.onboarding-root .h-8 {
   width: 2.75rem !important;
   height: 2.75rem !important;
 }
@@ -292,7 +341,11 @@
 .admin-dashboard-root input[type="text"],
 .admin-dashboard-root input[type="password"],
 .admin-dashboard-root select,
-.admin-dashboard-root textarea {
+.admin-dashboard-root textarea,
+.onboarding-root input[type="text"],
+.onboarding-root input[type="password"],
+.onboarding-root select,
+.onboarding-root textarea {
   padding-top: 0.875rem !important;
   padding-bottom: 0.875rem !important;
   padding-left: 1.125rem !important;
@@ -301,11 +354,13 @@
   border-radius: 0.875rem !important;
 }
 
-.admin-dashboard-root input.pl-9 {
+.admin-dashboard-root input.pl-9,
+.onboarding-root input.pl-9 {
   padding-left: 2.5rem !important;
 }
 
-.admin-dashboard-root button {
+.admin-dashboard-root button,
+.onboarding-root button {
   padding-top: 0.75rem !important;
   padding-bottom: 0.75rem !important;
 }
@@ -322,16 +377,20 @@
 }
 
 /* Ensure indicators and progress bars scale up */
-.admin-dashboard-root .h-1\.5 {
+.admin-dashboard-root .h-1\.5,
+.onboarding-root .h-1\.5 {
   height: 10px !important;
 }
-.admin-dashboard-root .h-2 {
+.admin-dashboard-root .h-2,
+.onboarding-root .h-2 {
   height: 12px !important;
 }
 
 /* Tweak tables headers height */
 .admin-dashboard-root .mb-1,
-.admin-dashboard-root .mb-2 {
+.admin-dashboard-root .mb-2,
+.onboarding-root .mb-1,
+.onboarding-root .mb-2 {
   margin-bottom: 0.875rem !important;
 }
 
