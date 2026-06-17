@@ -84,6 +84,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
     setSelectedIds([]);
   }, [activeTab, searchQuery, startDate, endDate, currentPage, sortField, sortDirection]);
 
+  // Reset current page to 1 when filters change to avoid empty pages on search/filtering
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, activeTab, startDate, endDate]);
+
   // Stable Mock/Real Data construction helpers
   const getProfileDate = (p: OnboardingData): Date => {
     const rawDate = p.createdAt || (p as any).created_at || (p as any).createdAt;
@@ -303,7 +308,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
   // Pagination logic
   const totalItems = sortedProfiles.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
-  const indexOfLastItem = currentPage * itemsPerPage;
+
+  // Guard against currentPage being out of range (e.g. during search filter application)
+  const activePage = Math.min(Math.max(1, currentPage), totalPages);
+  const indexOfLastItem = activePage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = sortedProfiles.slice(indexOfFirstItem, indexOfLastItem);
 
@@ -781,7 +789,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
           
           <div className="flex items-center gap-2">
             <button
-              disabled={currentPage === 1}
+              disabled={activePage === 1}
               onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
               className="p-1 text-slate-400 hover:text-slate-700 disabled:opacity-40 disabled:hover:text-slate-400 cursor-pointer transition-colors font-bold text-xs"
             >
@@ -790,7 +798,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
             
             {Array.from({ length: totalPages }).map((_, i) => {
               const pageNum = i + 1;
-              const isPageActive = currentPage === pageNum;
+              const isPageActive = activePage === pageNum;
               return (
                 <button
                   key={i}
@@ -807,7 +815,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
             })}
 
             <button
-              disabled={currentPage === totalPages}
+              disabled={activePage === totalPages}
               onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
               className="p-1 text-slate-400 hover:text-slate-700 disabled:opacity-40 disabled:hover:text-slate-400 cursor-pointer transition-colors font-bold text-xs"
             >
