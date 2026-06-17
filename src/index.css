@@ -368,6 +368,11 @@
     padding-left: 2.5rem !important;
   }
 
+  .admin-dashboard-root input.pl-12,
+  .onboarding-root input.pl-12 {
+    padding-left: 3.25rem !important;
+  }
+
   .admin-dashboard-root button,
   .onboarding-root button {
     padding-top: 0.75rem !important;
