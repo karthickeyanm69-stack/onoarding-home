@@ -440,10 +440,10 @@ export default function App() {
       </header>
 
       {/* 2. SPLIT WORKSPACE FILLING REST OF SCREEN */}
-      <div className="flex-1 bg-slate-100/60 flex items-center justify-center overflow-hidden relative p-4">
+      <div className="flex-1 bg-slate-100/60 flex items-center justify-center overflow-hidden relative p-0 sm:p-4">
         
         {/* Simulated mobile phone preview chassis (matches uploaded frame) */}
-        <div className="w-full h-full sm:w-[500px] sm:h-[840px] sm:max-h-[96%] rounded-none sm:rounded-[48px] border-0 sm:border-[14px] border-slate-955 bg-white shadow-none sm:shadow-2xl flex flex-col overflow-hidden relative transition-all duration-300">
+        <div className="w-full h-full sm:w-[378px] sm:h-[840px] sm:max-h-[96%] rounded-none sm:rounded-[48px] border-0 sm:border-[14px] border-slate-955 bg-white shadow-none sm:shadow-2xl flex flex-col overflow-hidden relative transition-all duration-300">
           
           {/* Speaker Notch Bezel (visible on desktop frame) */}
           <div className="hidden sm:flex absolute top-0 left-1/2 -translate-x-1/2 w-32 h-4.5 bg-slate-950 rounded-b-2xl z-50 items-center justify-center">

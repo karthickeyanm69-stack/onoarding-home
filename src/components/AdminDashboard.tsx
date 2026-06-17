@@ -773,11 +773,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
       <div className="w-[230px] bg-slate-900 shrink-0 py-6 flex flex-col justify-between text-white relative">
         <div className="w-full space-y-5">
           
-          <div className="flex items-center gap-3 pl-5 select-none">
-            <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center text-white font-black text-sm shadow-md">
+          <div className="flex items-center gap-3.5 pl-5 select-none py-1.5">
+            <div className="w-10 h-10 rounded-2xl bg-blue-600 flex items-center justify-center text-white font-black text-lg shadow-md shrink-0">
               E
             </div>
-            <span className="font-bold text-sm tracking-tight text-white">eOnboard Control</span>
+            <span className="font-black text-lg tracking-tight text-white">eOnboard Control</span>
           </div>
 
           <div className="w-full space-y-4 px-2 overflow-y-auto max-h-[calc(100vh-160px)] custom-scrollbar">
