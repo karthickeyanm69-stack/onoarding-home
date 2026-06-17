@@ -136,26 +136,35 @@ app.patch('/rest/v1/profiles', (req, res) => {
   res.json(updatedRecord);
 });
 
-// DELETE profiles (deletes profile by id filter)
+// DELETE profiles (deletes profiles by id filter)
 app.delete('/rest/v1/profiles', (req, res) => {
   const db = readDatabase();
   const filterId = req.query.id as string;
 
-  if (!filterId || !filterId.startsWith('eq.')) {
-    return res.status(400).json({ error: 'Filtering by specific ID (id=eq.UUID) is required for delete' });
+  if (!filterId) {
+    return res.status(400).json({ error: 'Filter is required for delete' });
   }
 
-  const targetId = filterId.substring(3);
-  const filtered = db.filter((item: any) => item.id !== targetId);
+  let targetIds: string[] = [];
+  if (filterId.startsWith('eq.')) {
+    targetIds = [filterId.substring(3)];
+  } else if (filterId.startsWith('in.(') && filterId.endsWith(')')) {
+    const content = filterId.slice(4, -1);
+    targetIds = content.split(',').map(id => id.trim().replace(/^["']|["']$/g, ''));
+  } else {
+    return res.status(400).json({ error: 'Unsupported filter format. Only eq.ID and in.(ID1,ID2) are supported.' });
+  }
+
+  const filtered = db.filter((item: any) => !targetIds.includes(item.id));
 
   if (db.length === filtered.length) {
-    return res.status(404).json({ error: 'Profile not found' });
+    return res.status(404).json({ error: 'Profiles not found' });
   }
 
   writeDatabase(filtered);
-  console.log(`[Mock Server] Deleted record with ID: ${targetId}`);
+  console.log(`[Mock Server] Deleted records with IDs: ${targetIds.join(', ')}`);
 
-  res.json({ message: 'Deleted successfully', id: targetId });
+  res.json({ message: 'Deleted successfully', ids: targetIds });
 });
 
 app.listen(PORT, () => {

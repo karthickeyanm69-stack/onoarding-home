@@ -173,6 +173,27 @@ export async function deleteProfile(id: string): Promise<void> {
 }
 
 /**
+ * Delete multiple profiles by IDs.
+ */
+export async function deleteProfiles(ids: string[]): Promise<void> {
+  const supabase = getSupabaseClient();
+  if (!supabase) {
+    throw new Error('Supabase not configured');
+  }
+
+  const { error } = await supabase
+    .from('profiles')
+    .delete()
+    .in('id', ids);
+
+  if (error) {
+    console.error('Supabase batch delete failure:', error);
+    throw error;
+  }
+}
+
+
+/**
  * Update any profile fields.
  */
 export async function updateProfile(

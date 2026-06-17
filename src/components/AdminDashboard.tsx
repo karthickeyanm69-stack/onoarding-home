@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Trash2, Edit, Check, ArrowLeft, User, Calendar, 
   AlertCircle, AlertTriangle, Settings, ChevronDown, Users, RefreshCw
 } from 'lucide-react';
 import { OnboardingData } from '../types';
-import { fetchProfiles, deleteProfile, updateProfile } from '../supabase';
+import { fetchProfiles, deleteProfile, updateProfile, deleteProfiles } from '../supabase';
 
 interface AdminDashboardProps {
   onBackToOnboarding: () => void;
@@ -28,25 +28,23 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
   const [activeDropdownId, setActiveDropdownId] = useState<string | null>(null);
 
   // Sorting states
-  const [sortField, setSortField] = useState<'id' | 'name' | 'date' | 'step'>('id');
+  const [sortField, setSortField] = useState<'id' | 'name' | 'date' | 'step'>('name');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
-  // Interactive Date Range picker states (default covers 30 days, cached in localStorage)
+  // Interactive Date Range picker states (default covers all-time, cached in localStorage)
   const [startDate, setStartDate] = useState<string>(() => {
     try {
       const saved = localStorage.getItem('ewe_admin_start_date');
       if (saved) return saved;
     } catch {}
-    const d = new Date();
-    d.setDate(d.getDate() - 30);
-    return d.toISOString().split('T')[0];
+    return '';
   });
   const [endDate, setEndDate] = useState<string>(() => {
     try {
       const saved = localStorage.getItem('ewe_admin_end_date');
       if (saved) return saved;
     } catch {}
-    return new Date().toISOString().split('T')[0];
+    return '';
   });
 
   // Pagination states
@@ -58,6 +56,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [saving, setSaving] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
+
+  // Multiple Delete selection states
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [isBulkDeleting, setIsBulkDeleting] = useState<boolean>(false);
+  const [showBulkDeleteModal, setShowBulkDeleteModal] = useState<boolean>(false);
 
   // Close dropdown context menu on click outside
   useEffect(() => {
@@ -75,6 +78,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
       console.error('Error saving date filters to localStorage', e);
     }
   }, [startDate, endDate]);
+
+  // Reset row selection when filters or pages change to avoid off-screen batch operations
+  useEffect(() => {
+    setSelectedIds([]);
+  }, [activeTab, searchQuery, startDate, endDate, currentPage, sortField, sortDirection]);
 
   // Stable Mock/Real Data construction helpers
   const getProfileDate = (p: OnboardingData): Date => {
@@ -144,6 +152,24 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
     }
   };
 
+  // Multiple Delete Action
+  const handleBulkDelete = async () => {
+    if (selectedIds.length === 0) return;
+    setIsBulkDeleting(true);
+    try {
+      await deleteProfiles(selectedIds);
+      showToast(`${selectedIds.length} profiles deleted successfully.`);
+      setSelectedIds([]);
+      setShowBulkDeleteModal(false);
+      await loadData();
+    } catch (err: any) {
+      console.error(err);
+      showToast('Bulk delete failed. Make sure your database DELETE policy is enabled.', true);
+    } finally {
+      setIsBulkDeleting(false);
+    }
+  };
+
   // Edit Action - save updates
   const handleSaveEdit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -202,28 +228,65 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
     if (activeTab === 'in_progress' && status !== 'In Progress') return false;
     if (activeTab === 'drafts' && status !== 'Draft') return false;
 
-    // Date range filter
+    // Date range filter (optional)
     const profileDate = getProfileDate(p);
-    const start = new Date(startDate);
-    start.setHours(0,0,0,0);
-    const end = new Date(endDate);
-    end.setHours(23,59,59,999);
-    if (profileDate < start || profileDate > end) return false;
+    if (startDate) {
+      const start = new Date(startDate);
+      start.setHours(0,0,0,0);
+      if (profileDate < start) return false;
+    }
+    if (endDate) {
+      const end = new Date(endDate);
+      end.setHours(23,59,59,999);
+      if (profileDate > end) return false;
+    }
 
     return true;
   });
 
   // Sort profiles
   const sortedProfiles = [...filteredProfiles].sort((a, b) => {
+    if (sortField === 'name') {
+      const nameA = a.fullName.trim();
+      const nameB = b.fullName.trim();
+      if (nameA === nameB) return 0;
+      if (!nameA) return sortDirection === 'asc' ? 1 : -1;
+      if (!nameB) return sortDirection === 'asc' ? -1 : 1;
+
+      const charA = nameA.charAt(0);
+      const charB = nameB.charAt(0);
+
+      const isLetterA = /^[a-zA-Z]/.test(charA);
+      const isLetterB = /^[a-zA-Z]/.test(charB);
+
+      const isDigitA = /^[0-9]/.test(charA);
+      const isDigitB = /^[0-9]/.test(charB);
+
+      // Category priorities: Letters (1) > Numbers (2) > Emojis/Symbols (3)
+      let categoryA = 3;
+      if (isLetterA) categoryA = 1;
+      else if (isDigitA) categoryA = 2;
+
+      let categoryB = 3;
+      if (isLetterB) categoryB = 1;
+      else if (isDigitB) categoryB = 2;
+
+      if (categoryA !== categoryB) {
+        const diff = categoryA - categoryB;
+        return sortDirection === 'asc' ? diff : -diff;
+      }
+
+      // Same category, standard locale comparison
+      const comp = nameA.localeCompare(nameB, undefined, { sensitivity: 'base', numeric: true });
+      return sortDirection === 'asc' ? comp : -comp;
+    }
+
     let valA: any = '';
     let valB: any = '';
     
     if (sortField === 'id') {
       valA = a.id || '';
       valB = b.id || '';
-    } else if (sortField === 'name') {
-      valA = a.fullName.toLowerCase();
-      valB = b.fullName.toLowerCase();
     } else if (sortField === 'date') {
       valA = getProfileDate(a).getTime();
       valB = getProfileDate(b).getTime();
@@ -243,6 +306,38 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = sortedProfiles.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Page selection states & togglers
+  const pageIds = currentItems.map(p => p.id).filter((id): id is string => !!id);
+  const selectedPageIds = selectedIds.filter(id => pageIds.includes(id));
+  const isAllPageSelected = pageIds.length > 0 && selectedPageIds.length === pageIds.length;
+  const isSomePageSelected = selectedPageIds.length > 0 && selectedPageIds.length < pageIds.length;
+
+  const masterCheckboxRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (masterCheckboxRef.current) {
+      masterCheckboxRef.current.indeterminate = isSomePageSelected;
+    }
+  }, [isSomePageSelected]);
+
+  const handleToggleSelectAllPage = () => {
+    if (isAllPageSelected) {
+      setSelectedIds(prev => prev.filter(id => !pageIds.includes(id)));
+    } else {
+      setSelectedIds(prev => {
+        const otherIds = prev.filter(id => !pageIds.includes(id));
+        return [...otherIds, ...pageIds];
+      });
+    }
+  };
+
+  const handleToggleSelect = (id: string) => {
+    setSelectedIds(prev =>
+      prev.includes(id)
+        ? prev.filter(x => x !== id)
+        : [...prev, id]
+    );
+  };
 
   // Set selected ID to first item on page/data changes
   useEffect(() => {
@@ -415,6 +510,30 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
           </div>
         )}
 
+        {/* Bulk Action Bar */}
+        {selectedIds.length > 0 && (
+          <div className="mt-2 mx-1 px-4 py-2 bg-[#0052ff]/10 border border-[#0052ff]/20 rounded-xl flex items-center justify-between animate-fadeIn shrink-0">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-[#0052ff]">
+                {selectedIds.length} profiles selected
+              </span>
+              <button 
+                onClick={() => setSelectedIds([])}
+                className="text-[10px] font-bold text-[#0052ff] hover:underline cursor-pointer"
+              >
+                Clear selection
+              </button>
+            </div>
+            <button
+              onClick={() => setShowBulkDeleteModal(true)}
+              className="px-2.5 py-1 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-[10px] font-bold flex items-center gap-1 transition-colors shadow-sm cursor-pointer"
+            >
+              <Trash2 className="w-3 h-3" />
+              Delete Selected
+            </button>
+          </div>
+        )}
+
         {/* ======================================================== */}
         {/* 3. PROFILES TABLE                                       */}
         {/* ======================================================== */}
@@ -424,8 +543,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
           <div className="grid grid-cols-12 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider select-none shrink-0 mb-1">
             <div 
               onClick={() => handleSort('id')} 
-              className="col-span-3 flex items-center gap-0.5 cursor-pointer hover:text-slate-600"
+              className="col-span-3 flex items-center gap-2 cursor-pointer hover:text-slate-600"
             >
+              <input
+                type="checkbox"
+                ref={masterCheckboxRef}
+                checked={isAllPageSelected}
+                onChange={handleToggleSelectAllPage}
+                onClick={(e) => e.stopPropagation()}
+                className="rounded border-slate-300 text-[#0052ff] focus:ring-blue-500/20 w-3.5 h-3.5 cursor-pointer shrink-0"
+              />
               User / Id {sortField === 'id' ? (sortDirection === 'asc' ? '▴' : '▾') : <span className="text-slate-300">▴</span>}
             </div>
             <div className="col-span-3">Contact</div>
@@ -482,7 +609,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
                   }`}
                 >
                   {/* User / ID */}
-                  <div className="col-span-3 flex items-center gap-2.5 min-w-0">
+                  <div className="col-span-3 flex items-center gap-2 min-w-0">
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.includes(p.id || '')}
+                      onChange={() => handleToggleSelect(p.id || '')}
+                      onClick={(e) => e.stopPropagation()}
+                      className="rounded border-slate-300 text-[#0052ff] focus:ring-blue-500/20 w-3.5 h-3.5 cursor-pointer shrink-0"
+                    />
                     <div className={`w-8 h-8 rounded-full overflow-hidden shrink-0 border flex items-center justify-center ${isSelected ? 'border-white/40 bg-white/25' : 'border-slate-200 bg-slate-100'}`}>
                       {p.profileImg ? (
                         <img src={p.profileImg} alt="user" className="w-full h-full object-cover" />
@@ -1019,6 +1153,48 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
                 className="py-1.5 px-3 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-bold transition-colors disabled:opacity-50 flex items-center justify-center gap-1 cursor-pointer"
               >
                 {isDeleting && <div className="w-3.5 h-3.5 rounded-full border border-white border-t-transparent animate-spin" />}
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ======================================================== */}
+      {/* 7. BULK DELETE CONFIRMATION MODAL                        */}
+      {/* ======================================================== */}
+      {showBulkDeleteModal && (
+        <div className="absolute inset-0 bg-slate-950/60 z-50 flex items-center justify-center p-4 pointer-events-auto cursor-pointer animate-fadeIn" onClick={() => setShowBulkDeleteModal(false)}>
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-[280px] bg-white rounded-2xl border border-slate-150 p-4 text-center cursor-default space-y-3 shadow-2xl"
+          >
+            <div className="mx-auto w-10 h-10 rounded-full bg-rose-50 border border-rose-100 flex items-center justify-center">
+              <AlertTriangle className="w-5 h-5 text-rose-600 animate-bounce" />
+            </div>
+            
+            <div>
+              <h3 className="font-bold text-slate-900 text-sm font-display">Delete Profiles?</h3>
+              <p className="text-xs text-slate-500 mt-1">
+                Are you sure you want to delete the {selectedIds.length} selected onboarding records? This action cannot be undone.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 pt-1">
+              <button
+                type="button"
+                onClick={() => setShowBulkDeleteModal(false)}
+                className="py-1.5 px-3 border border-slate-200 rounded-lg text-xs font-bold text-slate-500 hover:bg-slate-50 transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={isBulkDeleting}
+                onClick={handleBulkDelete}
+                className="py-1.5 px-3 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-bold transition-colors disabled:opacity-50 flex items-center justify-center gap-1 cursor-pointer"
+              >
+                {isBulkDeleting && <div className="w-3.5 h-3.5 rounded-full border border-white border-t-transparent animate-spin" />}
                 Delete
               </button>
             </div>
