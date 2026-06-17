@@ -660,71 +660,65 @@ export default function App() {
               </div>
             )}
 
-            {/* NAVIGATION FOOTER (Steps 2 to 3) */}
-            {!completed && step >= 2 && (
-              <div className={`bg-slate-50 border-t border-slate-100 flex flex-col gap-2 relative z-30 select-none mt-6 shrink-0 ${
-                deviceMode === 'mobile' 
-                  ? '-mx-4 -mb-4 px-4 py-3.5' 
-                  : deviceMode === 'tablet' 
-                  ? '-mx-6 -mb-6 px-6 py-4' 
-                  : '-mx-4 sm:-mx-8 md:-mx-12 -mb-4 sm:-mb-8 md:-mb-12 px-4 sm:px-8 md:px-12 py-4 md:py-5'
-              }`}>
-                <div className="flex items-center justify-between gap-2">
-                  
-                  {/* LEFT BUTTON: BACK */}
-                  <button
-                    type="button"
-                    onClick={handleBack}
-                    className={`border border-slate-200 hover:bg-slate-100 rounded-lg font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1 cursor-pointer transition-colors shadow-sm bg-white ${
-                      deviceMode === 'mobile' ? 'py-1.5 px-2.5 text-[11px]' : 'py-1.5 px-3.5 sm:py-2 sm:px-4 text-xs'
-                    }`}
-                  >
-                    <ArrowLeft className="w-3.5 h-3.5" />
-                    Back
-                  </button>
-
-                  {/* CENTERING DOCK CAPSULES */}
-                  <div className="flex items-center gap-1">
-                    {Array.from({ length: 10 }).map((_, idx) => {
-                      const stepNum = idx + 1;
-                      const isActive = step === stepNum;
-                      return (
-                        <div
-                          key={stepNum}
-                          onClick={() => {
-                            if (stepNum < step) {
-                              setStep(stepNum as OnboardingStepId);
-                            }
-                          }}
-                          className={`h-1.5 rounded-full cursor-pointer transition-all ${
-                            isActive
-                              ? 'w-4.5 sm:w-6 bg-blue-600'
-                              : stepNum < step
-                              ? 'w-1.5 bg-blue-400'
-                              : 'w-1.5 bg-slate-300'
-                          }`}
-                        />
-                      );
-                    })}
-                  </div>
-
-                  {/* RIGHT BUTTON: NEXT */}
-                  <button
-                    type="button"
-                    onClick={handleNext}
-                    className={`bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold uppercase flex items-center gap-1 transition-colors cursor-pointer ${
-                      deviceMode === 'mobile' ? 'py-1.5 px-3.5 text-[11px]' : 'py-1.5 px-3.5 sm:py-2 sm:px-5 text-xs tracking-wider'
-                    }`}
-                  >
-                    {step === 10 ? 'Complete' : 'Next'}
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
-
-                </div>
-              </div>
-            )}
-
           </main>
+
+          {/* NAVIGATION FOOTER (Steps 2 to 10) */}
+          {!completed && step >= 2 && (
+            <div className="bg-slate-50 border-t border-slate-100 flex flex-col gap-2 relative z-30 select-none px-4 py-3 sm:px-6 sm:py-4 shrink-0">
+              <div className="flex items-center justify-between gap-2">
+                
+                {/* LEFT BUTTON: BACK */}
+                <button
+                  type="button"
+                  onClick={handleBack}
+                  className={`border border-slate-200 hover:bg-slate-100 rounded-lg font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1 cursor-pointer transition-colors shadow-sm bg-white ${
+                    deviceMode === 'mobile' ? 'py-1.5 px-2.5 text-[11px]' : 'py-1.5 px-3.5 sm:py-2 sm:px-4 text-xs'
+                  }`}
+                >
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                  Back
+                </button>
+
+                {/* CENTERING DOCK CAPSULES */}
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: 10 }).map((_, idx) => {
+                    const stepNum = idx + 1;
+                    const isActive = step === stepNum;
+                    return (
+                      <div
+                        key={stepNum}
+                        onClick={() => {
+                          if (stepNum < step) {
+                            setStep(stepNum as OnboardingStepId);
+                          }
+                        }}
+                        className={`h-1.5 rounded-full cursor-pointer transition-all ${
+                          isActive
+                            ? 'w-4.5 sm:w-6 bg-blue-600'
+                            : stepNum < step
+                            ? 'w-1.5 bg-blue-400'
+                            : 'w-1.5 bg-slate-300'
+                        }`}
+                      />
+                    );
+                  })}
+                </div>
+
+                {/* RIGHT BUTTON: NEXT */}
+                <button
+                  type="button"
+                  onClick={handleNext}
+                  className={`bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold uppercase flex items-center gap-1 transition-colors cursor-pointer ${
+                    deviceMode === 'mobile' ? 'py-1.5 px-3.5 text-[11px]' : 'py-1.5 px-3.5 sm:py-2 sm:px-5 text-xs tracking-wider'
+                  }`}
+                >
+                  {step === 10 ? 'Complete' : 'Next'}
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+
+              </div>
+            </div>
+          )}
 
 
 
