@@ -77,6 +77,13 @@ CREATE TABLE IF NOT EXISTS public.profiles (
 -- Enable Row Level Security
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
+-- Drop existing policies if they already exist to prevent duplicate errors
+DROP POLICY IF EXISTS "Allow public read access" ON public.profiles;
+DROP POLICY IF EXISTS "Allow public select by ID" ON public.profiles;
+DROP POLICY IF EXISTS "Allow public insert" ON public.profiles;
+DROP POLICY IF EXISTS "Allow public update by ID" ON public.profiles;
+DROP POLICY IF EXISTS "Allow public delete by ID" ON public.profiles;
+
 -- Anonymous Select Policy
 CREATE POLICY "Allow public select by ID" ON public.profiles FOR SELECT USING (true);
 

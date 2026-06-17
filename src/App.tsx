@@ -18,7 +18,22 @@ const initialData: OnboardingData = {
   gender: '',
   educationLevel: '',
   fieldOfStudy: '',
-  institution: ''
+  institution: '',
+  parentName: '',
+  parentEmail: '',
+  parentPhone: '',
+  parentRelationship: '',
+  learningGoals: [],
+  interests: [],
+  learningPreference: '',
+  dailyCommitment: '',
+  aiAdaptiveDifficulty: true,
+  aiStudyReminders: true,
+  aiCareerInsights: false,
+  aiConceptExplainer: true,
+  notifyEmailDigest: true,
+  notifyPush: true,
+  notifyWeeklyAchievements: true
 };
 
 export default function App() {
@@ -40,7 +55,7 @@ export default function App() {
       const savedStep = localStorage.getItem('ewe_onboarding_step');
       if (savedStep) {
         const parsed = parseInt(savedStep, 10);
-        if (parsed >= 1 && parsed <= 3) return parsed as OnboardingStepId;
+        if (parsed >= 1 && parsed <= 10) return parsed as OnboardingStepId;
       }
     } catch {}
     return 1;
@@ -153,7 +168,12 @@ export default function App() {
     return () => clearTimeout(timer);
   }, [
     data.fullName, data.preferredName, data.gender, data.educationLevel,
-    data.fieldOfStudy, data.institution, step, completed, reinitCounter
+    data.fieldOfStudy, data.institution, data.parentName, data.parentEmail,
+    data.parentPhone, data.parentRelationship, data.learningGoals, data.interests,
+    data.learningPreference, data.dailyCommitment, data.aiAdaptiveDifficulty,
+    data.aiStudyReminders, data.aiCareerInsights, data.aiConceptExplainer,
+    data.notifyEmailDigest, data.notifyPush, data.notifyWeeklyAchievements,
+    step, completed, reinitCounter
   ]);
 
   // Validate step requirements
@@ -177,6 +197,43 @@ export default function App() {
       if (!data.institution.trim()) {
         currentErrors.push('Institution / School is required.');
       }
+    } else if (currentStep === 4) {
+      const isSkipped = data.parentName === 'SKIPPED';
+      if (!isSkipped) {
+        if (!data.parentName.trim()) {
+          currentErrors.push('Parent name is required.');
+        }
+        if (!data.parentEmail.trim()) {
+          currentErrors.push('Parent email is required.');
+        } else {
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(data.parentEmail)) {
+            currentErrors.push('Valid parent email is required.');
+          }
+        }
+        if (!data.parentPhone.trim()) {
+          currentErrors.push('Parent phone number is required.');
+        }
+        if (!data.parentRelationship) {
+          currentErrors.push('Parent relationship indicator is required.');
+        }
+      }
+    } else if (currentStep === 5) {
+      if (!data.learningGoals || data.learningGoals.length === 0) {
+        currentErrors.push('Please select at least one learning goal.');
+      }
+    } else if (currentStep === 6) {
+      if (!data.interests || data.interests.length === 0) {
+        currentErrors.push('Please select at least one subject area.');
+      }
+    } else if (currentStep === 7) {
+      if (!data.learningPreference) {
+        currentErrors.push('Please select a learning preference.');
+      }
+    } else if (currentStep === 8) {
+      if (!data.dailyCommitment) {
+        currentErrors.push('Please select a daily commitment target.');
+      }
     }
 
     setErrors(currentErrors);
@@ -192,7 +249,7 @@ export default function App() {
     // Clear previous errors
     setErrors([]);
 
-    if (step < 3) {
+    if (step < 10) {
       setStep((step + 1) as OnboardingStepId);
     } else {
       // Final confirmation
@@ -235,27 +292,24 @@ export default function App() {
       fullName: data.fullName,
       preferredName: data.preferredName,
       gender: data.gender,
-      demographics: {
-         ageGroup: data.ageGroup,
-         origin: {
-            country: data.country || 'Not specified',
-            state: data.state || 'Not specified',
-            city: data.city || 'Not specified'
-         }
+      academicProfile: {
+         educationLevel: data.educationLevel,
+         fieldOfStudy: data.fieldOfStudy,
+         institution: data.institution
       },
-      archetypeProfile: {
-         education: data.educationLevel,
-         occupation: data.occupation,
-         primaryLanguages: data.languages
+      parentProfile: {
+         name: data.parentName,
+         email: data.parentEmail,
+         phone: data.parentPhone,
+         relationship: data.parentRelationship
       },
-      verifiedCredentials: {
-         emailAddress: data.email,
-         mobilePhone: data.mobile,
-         securityPassed: data.emailVerified && data.mobileVerified
+      learningProfile: {
+         goals: data.learningGoals,
+         interests: data.interests
       },
       metadata: {
          timestamp: new Date().toISOString(),
-         originSystem: 'EVE Onboarding Platform v4'
+         originSystem: 'EVE Onboarding Platform v4 (Module 2)'
       }
     };
 
@@ -442,7 +496,14 @@ export default function App() {
                 {[
                   { id: 1, title: 'Welcome' },
                   { id: 2, title: 'Personal Details' },
-                  { id: 3, title: 'Academic Details' }
+                  { id: 3, title: 'Academic Details' },
+                  { id: 4, title: 'Guardian Contact' },
+                  { id: 5, title: 'Learning Goals' },
+                  { id: 6, title: 'Subject Interests' },
+                  { id: 7, title: 'Learning Style' },
+                  { id: 8, title: 'Commitment Target' },
+                  { id: 9, title: 'AI Settings' },
+                  { id: 10, title: 'Notifications' }
                 ].map((sConfig) => {
                   const stepNum = sConfig.id;
                   const isActive = step === stepNum && !completed;
@@ -548,19 +609,27 @@ export default function App() {
                   </div>
                 )}
 
-                {/* Step-by-Step Forms (Steps 2 and 3) */}
-                {(step === 2 || step === 3) && (
+                {/* Step-by-Step Forms (Steps 2 to 10) */}
+                {step >= 2 && step <= 10 && (
                   <div className="flex-1 flex flex-col justify-between animate-fadeIn min-h-0">
                     
                     {/* Step Label Header */}
                     <div className="mb-4 md:mb-6 text-left select-none border-b border-slate-100 pb-3 md:pb-4 shrink-0">
                       <span className="text-[10px] font-mono tracking-widest text-blue-600 font-bold uppercase block">
-                        Step {step} of 3
+                        Step {step} of 10
                       </span>
                       <h3 className={`font-bold font-display text-slate-900 tracking-tight leading-snug ${
-                        deviceMode === 'mobile' ? 'text-lg' : 'text-xl sm:text-2xl'
+                        deviceMode === 'mobile' ? 'text-lg' : 'text-xl'
                       }`}>
-                        {step === 2 ? 'Personal Details' : 'Academic Details'}
+                        {step === 2 && 'Personal Details'}
+                        {step === 3 && 'Academic Details'}
+                        {step === 4 && 'Parent / Guardian Info'}
+                        {step === 5 && 'Learning Goals'}
+                        {step === 6 && 'Subject Interests'}
+                        {step === 7 && 'Learning Style'}
+                        {step === 8 && 'Commitment Target'}
+                        {step === 9 && 'AI Settings'}
+                        {step === 10 && 'Notifications'}
                       </h3>
                     </div>
 
@@ -616,7 +685,7 @@ export default function App() {
 
                   {/* CENTERING DOCK CAPSULES */}
                   <div className="flex items-center gap-1">
-                    {Array.from({ length: 3 }).map((_, idx) => {
+                    {Array.from({ length: 10 }).map((_, idx) => {
                       const stepNum = idx + 1;
                       const isActive = step === stepNum;
                       return (
@@ -647,7 +716,7 @@ export default function App() {
                       deviceMode === 'mobile' ? 'py-1.5 px-3.5 text-[11px]' : 'py-1.5 px-3.5 sm:py-2 sm:px-5 text-xs tracking-wider'
                     }`}
                   >
-                    {step === 3 ? 'Complete' : 'Next'}
+                    {step === 10 ? 'Complete' : 'Next'}
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
 
