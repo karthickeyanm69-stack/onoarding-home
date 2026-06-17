@@ -1541,26 +1541,31 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
                 </div>
 
                 {/* Search + Filter Bar */}
-                <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
-                  <div className="relative flex-1 max-w-sm">
-                    <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
-                    <input
-                      type="text"
-                      placeholder="Search by parent name, email, phone..."
-                      value={parentSearchQuery}
-                      onChange={(e) => setParentSearchQuery(e.target.value)}
-                      className="w-full pl-9 pr-4 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 bg-slate-50/50 hover:bg-slate-50 focus:bg-white transition-all font-semibold placeholder:text-slate-400"
-                    />
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+                  <div className="text-sm font-bold text-slate-400">
+                    <span className="text-xs font-mono font-bold text-slate-400">{filteredParentsList.length} records found</span>
                   </div>
-                  {parentSearchQuery && (
-                    <button
-                      onClick={() => setParentSearchQuery('')}
-                      className="text-xs font-bold text-slate-400 hover:text-slate-700 cursor-pointer"
-                    >
-                      Clear
-                    </button>
-                  )}
-                  <span className="text-xs font-mono font-bold text-slate-400 ml-auto">{filteredParentsList.length} results</span>
+
+                  <div className="flex items-center gap-3 w-full sm:w-auto">
+                    {parentSearchQuery && (
+                      <button
+                        onClick={() => setParentSearchQuery('')}
+                        className="text-xs font-bold text-slate-400 hover:text-slate-700 cursor-pointer"
+                      >
+                        Clear
+                      </button>
+                    )}
+                    <div className="relative w-full sm:w-72">
+                      <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                      <input
+                        type="text"
+                        placeholder="Search parents..."
+                        value={parentSearchQuery}
+                        onChange={(e) => setParentSearchQuery(e.target.value)}
+                        className="w-full pl-9 pr-4 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 bg-slate-50/50 hover:bg-slate-50 focus:bg-white transition-all font-semibold placeholder:text-slate-400"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
 
