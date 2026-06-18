@@ -10,8 +10,8 @@ const isLocal = (import.meta as any).env?.DEV === true || (typeof window !== 'un
   window.location.hostname.startsWith('172.')
 ));
 const localHost = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
-const defaultUrl = (import.meta as any).env?.VITE_SUPABASE_URL || (isLocal ? `http://${localHost}:3000` : 'https://jhvjbizzwaykqhpnblmv.supabase.co');
-const defaultKey = (import.meta as any).env?.VITE_SUPABASE_ANON_KEY || (isLocal ? 'dummy-local-key-value-1234567890' : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpodmpiaXp6d2F5a3FocG5ibG12Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2MjAxMTUsImV4cCI6MjA5NzE5NjExNX0.fxBaGpjtvrPLJPFnP0aEfP1oUhxbCbpQKKF5fhBd2jI');
+const defaultUrl = isLocal ? `http://${localHost}:3002` : ((import.meta as any).env?.VITE_SUPABASE_URL || 'https://jhvjbizzwaykqhpnblmv.supabase.co');
+const defaultKey = isLocal ? 'dummy-local-key-value-1234567890' : ((import.meta as any).env?.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpodmpiaXp6d2F5a3FocG5ibG12Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2MjAxMTUsImV4cCI6MjA5NzE5NjExNX0.fxBaGpjtvrPLJPFnP0aEfP1oUhxbCbpQKKF5fhBd2jI');
 
 // Save / Load custom credentials via client-side configuration
 export function getStoredSupabaseCredentials() {
