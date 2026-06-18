@@ -66,7 +66,7 @@ export const OnboardingFinalReview: React.FC<FinalReviewProps> = ({
   };
 
   return (
-    <div className="space-y-6 text-center animate-fadeIn pr-1 text-sm max-h-[500px] overflow-y-auto custom-scrollbar select-none">
+    <div className="space-y-6 text-center animate-fadeIn pr-1 text-sm select-none">
       
       {/* 1. SUCCESS BADGE & TITLE */}
       <div className="space-y-4">
