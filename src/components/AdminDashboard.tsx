@@ -13,6 +13,8 @@ import { fetchProfiles, deleteProfile, updateProfile, deleteProfiles } from '../
 interface AdminDashboardProps {
   onBackToOnboarding: () => void;
   syncState: 'syncing' | 'synced' | 'offline';
+  theme: string;
+  onThemeChange: (theme: string) => void;
 }
 
 interface Course {
@@ -53,12 +55,18 @@ interface DeliveryReport {
   status: 'delivered' | 'failed' | 'pending';
 }
 
-export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboarding, syncState }) => {
+export const AdminDashboard: React.FC<AdminDashboardProps> = ({ 
+  onBackToOnboarding, 
+  syncState,
+  theme,
+  onThemeChange
+}) => {
   const [profiles, setProfiles] = useState<OnboardingData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [errorMsg, setErrorMsg] = useState<string>('');
   const [successMsg, setSuccessMsg] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [isAdminThemeDropdownOpen, setIsAdminThemeDropdownOpen] = useState<boolean>(false);
   
   // Navigation Tabs for Profiles (All, In Progress, Drafts, Completed)
   const [activeTab, setActiveTab] = useState<'all' | 'in_progress' | 'drafts' | 'completed'>('all');
@@ -537,7 +545,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
   };
 
   // Sparkline builder
-  const Sparkline = ({ values, color = '#2563EB' }: { values: number[], color?: string }) => {
+  const Sparkline = ({ values, color = 'var(--eve-accent)' }: { values: number[], color?: string }) => {
     const height = 24;
     const width = 68;
     const max = Math.max(...values, 1);
@@ -585,8 +593,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
       <svg viewBox={`0 0 ${chartWidth} ${chartHeight}`} className="w-full h-[160px] overflow-visible">
         <defs>
           <linearGradient id="growthGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#2563EB" stopOpacity="0.12" />
-            <stop offset="100%" stopColor="#2563EB" stopOpacity="0.0" />
+            <stop offset="0%" stopColor="var(--eve-accent)" stopOpacity="0.12" />
+            <stop offset="100%" stopColor="var(--eve-accent)" stopOpacity="0.0" />
           </linearGradient>
         </defs>
         <line x1="30" y1={chartHeight - 25} x2={chartWidth - 20} y2={chartHeight - 25} stroke="#E2E8F0" strokeWidth="1" />
@@ -594,11 +602,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
         <line x1="30" y1={chartHeight - 125} x2={chartWidth - 20} y2={chartHeight - 125} stroke="#F1F5F9" strokeWidth="1" />
 
         <path d={areaD} fill="url(#growthGrad)" />
-        <path d={pathD} fill="none" stroke="#2563EB" strokeWidth="2" strokeLinecap="round" />
+        <path d={pathD} fill="none" stroke="var(--eve-accent)" strokeWidth="2" strokeLinecap="round" />
 
         {points.map((p, idx) => (
           <g key={idx} className="group cursor-pointer">
-            <circle cx={p.x} cy={p.y} r="3.5" fill="#FFFFFF" stroke="#2563EB" strokeWidth="1.5" className="transition-all duration-150 hover:r-[5px]" />
+            <circle cx={p.x} cy={p.y} r="3.5" fill="#FFFFFF" stroke="var(--eve-accent)" strokeWidth="1.5" className="transition-all duration-150 hover:r-[5px]" />
             <text x={p.x} y={chartHeight - 8} textAnchor="middle" className="text-[9px] fill-slate-400 font-mono font-semibold">{p.label}</text>
             <g className="opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none">
               <rect x={p.x - 22} y={p.y - 26} width="44" height="16" rx="4" fill="#0F172A" />
@@ -986,6 +994,47 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
               <span className="capitalize">{syncState === 'synced' ? 'Synced' : syncState === 'syncing' ? 'Syncing...' : 'Offline'}</span>
             </div>
 
+            {/* Custom Admin Theme Selector */}
+            <div className="relative z-50">
+              <button
+                onClick={() => setIsAdminThemeDropdownOpen(!isAdminThemeDropdownOpen)}
+                className="py-2 px-3.5 rounded-xl text-xs font-bold border bg-slate-50 border-slate-200 text-slate-700 flex items-center gap-1.5 shadow-sm hover:bg-slate-100 transition-all cursor-pointer"
+              >
+                <span>
+                  {theme === 'eve-cosmic' && '🌌 Cosmic'}
+                  {theme === 'eve-android' && '🤖 Android'}
+                  {theme === 'eve-crimson' && '🌅 Crimson'}
+                </span>
+                <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+              </button>
+              
+              {isAdminThemeDropdownOpen && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setIsAdminThemeDropdownOpen(false)} />
+                  <div className="absolute right-0 mt-1.5 w-38 bg-white border border-slate-200 rounded-xl shadow-lg py-1.5 z-50 animate-fadeIn text-left">
+                    {[
+                      { id: 'eve-cosmic', label: '🌌 EVE Cosmic' },
+                      { id: 'eve-android', label: '🤖 EVE Android' },
+                      { id: 'eve-crimson', label: '🌅 Crimson Horizon' }
+                    ].map((t) => (
+                      <button
+                        key={t.id}
+                        onClick={() => {
+                          onThemeChange(t.id);
+                          setIsAdminThemeDropdownOpen(false);
+                        }}
+                        className={`w-full px-3 py-2 text-[10px] font-bold flex items-center justify-between hover:bg-slate-50 transition-colors ${
+                          theme === t.id ? 'text-blue-600 bg-blue-50/20' : 'text-slate-700'
+                        }`}
+                      >
+                        <span>{t.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+
             {/* Reload Data Button */}
             <button
               onClick={loadData}
@@ -1024,7 +1073,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToOnboardi
 
             <div className="grid grid-cols-6 gap-3 shrink-0">
               {[
-                { title: 'Total Students', value: totalStudents, change: '+12.4%', color: '#2563EB', spark: [5, 9, 15, 22, 28, 35, 45, 52] },
+                { title: 'Total Students', value: totalStudents, change: '+12.4%', color: 'var(--eve-accent)', spark: [5, 9, 15, 22, 28, 35, 45, 52] },
                 { title: 'Active Students', value: activeStudents, change: '+8.3%', color: '#10B981', spark: [12, 10, 18, 15, 25, 20, 28, 32] },
                 { title: 'Linked Parents', value: totalParents, change: '+15.2%', color: '#6366F1', spark: [2, 5, 8, 12, 11, 15, 18, 20] },
                 { title: 'Setups Done', value: completedCourses, change: '+24.1%', color: '#F59E0B', spark: [0, 2, 5, 12, 18, 25, 32, 40] },

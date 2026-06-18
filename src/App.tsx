@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { 
   Signal, Wifi, Battery, Lock, Play, ArrowRight, ArrowLeft, 
   Sparkle, Terminal, ExternalLink, RefreshCw, CheckCircle, Database, Shield,
-  Monitor, Tablet, Smartphone, AlertCircle
+  Monitor, Tablet, Smartphone, AlertCircle, ChevronDown
 } from 'lucide-react';
 import { OnboardingData, OnboardingStepId } from './types';
 import { OnboardingIllustration } from './components/OnboardingIllustration';
@@ -83,6 +83,33 @@ export default function App() {
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState<boolean>(false);
   const [passwordInput, setPasswordInput] = useState<string>('');
   const [loginError, setLoginError] = useState<string>('');
+
+  // Theme state orchestration
+  const [theme, setTheme] = useState<string>(() => {
+    try {
+      const savedTheme = localStorage.getItem('ewe_theme');
+      if (savedTheme) return savedTheme;
+    } catch {}
+    return 'eve-cosmic';
+  });
+  const [isThemeDropdownOpen, setIsThemeDropdownOpen] = useState<boolean>(false);
+
+  const handleThemeChange = (newTheme: string) => {
+    setTheme(newTheme);
+    try {
+      localStorage.setItem('ewe_theme', newTheme);
+    } catch {}
+  };
+
+  useEffect(() => {
+    const root = document.documentElement;
+    root.classList.remove('theme-eve-cosmic', 'theme-eve-android', 'theme-eve-crimson');
+    if (currentRoute === '/admin' || currentRoute === '/admine') {
+      root.classList.add(`theme-${theme}`);
+    } else {
+      root.classList.add('theme-eve-android');
+    }
+  }, [theme, currentRoute]);
 
   const handleAdminLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -396,6 +423,8 @@ export default function App() {
         <AdminDashboard 
           onBackToOnboarding={() => navigateTo('/')} 
           syncState={syncState} 
+          theme={theme}
+          onThemeChange={handleThemeChange}
         />
       </div>
     );

@@ -5,6 +5,192 @@
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
   --font-display: "Space Grotesk", sans-serif;
+
+  --color-eve-bg: var(--eve-bg);
+  --color-eve-surface: var(--eve-surface);
+  --color-eve-surface-card: var(--eve-surface-card);
+  --color-eve-border: var(--eve-border);
+  --color-eve-accent: var(--eve-accent);
+  --color-eve-accent-hover: var(--eve-accent-hover);
+  --color-eve-text: var(--eve-text);
+  --color-eve-text-muted: var(--eve-text-muted);
+}
+
+/* ======================================================== */
+/* EVE LAYOUT COLOR SYSTEM & THEME PRESETS                  */
+/* ======================================================== */
+
+/* 1. EVE Cosmic Theme (Dark - Default) */
+:root, .theme-eve-cosmic {
+  --eve-bg: #06060F;
+  --eve-surface: #0E0F1F;
+  --eve-surface-card: #15162d;
+  --eve-border: #1F2142;
+  --eve-accent: #00F2FE;
+  --eve-accent-hover: #00d2e0;
+  --eve-text: #e2e8f0;
+  --eve-text-muted: #94a3b8;
+  --eve-shadow: rgba(0, 242, 254, 0.15);
+  color-scheme: dark;
+}
+
+/* 2. EVE Android Theme (Light) */
+.theme-eve-android {
+  --eve-bg: #ffffff;
+  --eve-surface: #ffffff;
+  --eve-surface-card: #F0F4FA;
+  --eve-border: #dbeafe;
+  --eve-accent: #0088FF;
+  --eve-accent-hover: #0077ee;
+  --eve-text: #0f172a;
+  --eve-text-muted: #64748b;
+  --eve-shadow: rgba(0, 136, 255, 0.08);
+  color-scheme: light;
+}
+
+/* 3. EVE Crimson Horizon Theme (AMOLED) */
+.theme-eve-crimson {
+  --eve-bg: #000000;
+  --eve-surface: #080812;
+  --eve-surface-card: #121226;
+  --eve-border: #1d1d3a;
+  --eve-accent: #FF2E93;
+  --eve-accent-hover: #e0207d;
+  --eve-text: #ffffff;
+  --eve-text-muted: #a1a1aa;
+  --eve-shadow: rgba(255, 46, 147, 0.2);
+  color-scheme: dark;
+}
+
+/* Contextual Overrides for EVE Themes */
+.theme-eve-cosmic, .theme-eve-android, .theme-eve-crimson {
+  background-color: var(--eve-bg);
+  color: var(--eve-text);
+
+  /* Primary App Container elements */
+  .onboarding-root, .admin-dashboard-root {
+    background-color: var(--eve-bg) !important;
+    color: var(--eve-text) !important;
+  }
+
+  /* Body background selectors */
+  .bg-slate-50, .bg-\[\#F8FAFC\], .bg-slate-100\/60, .bg-slate-100 {
+    background-color: var(--eve-bg) !important;
+  }
+
+  /* Cards and primary sheets */
+  .bg-white {
+    background-color: var(--eve-surface) !important;
+  }
+
+  /* Secondary surface cards (forms, sub-panels) */
+  .bg-slate-50\/50, .bg-slate-50, .bg-slate-100 {
+    background-color: var(--eve-surface-card) !important;
+  }
+
+  /* Input fields specific support */
+  input[type="text"], input[type="password"], input[type="email"], input[type="tel"], select, textarea {
+    background-color: var(--eve-surface) !important;
+    color: var(--eve-text) !important;
+    border-color: var(--eve-border) !important;
+  }
+
+  /* Borders */
+  .border-slate-100, .border-slate-200, .border-slate-200\/80, .border-slate-200\/50, .border-slate-150, .border-slate-300 {
+    border-color: var(--eve-border) !important;
+  }
+
+  /* Text Colors */
+  .text-slate-900, .text-slate-800, .text-slate-700, .text-slate-950, .text-slate-650 {
+    color: var(--eve-text) !important;
+  }
+
+  .text-slate-400, .text-slate-500, .text-slate-550, .text-slate-600 {
+    color: var(--eve-text-muted) !important;
+  }
+
+  /* Accent background elements */
+  .bg-blue-600, .bg-blue-500 {
+    background-color: var(--eve-accent) !important;
+    color: #ffffff !important;
+  }
+
+  /* Accent text elements */
+  .text-blue-600, .text-blue-500 {
+    color: var(--eve-accent) !important;
+  }
+
+  /* Accent border elements */
+  .border-blue-600, .border-blue-500, .border-2.border-blue-600 {
+    border-color: var(--eve-accent) !important;
+  }
+
+  /* Active states like selected inputs or hover links */
+  .hover\:bg-blue-700:hover, .hover\:bg-blue-800:hover {
+    background-color: var(--eve-accent-hover) !important;
+  }
+
+  .focus\:ring-blue-600\/10:focus, .focus\:ring-blue-600\/20:focus {
+    box-shadow: 0 0 0 2px var(--eve-shadow) !important;
+  }
+
+  .focus\:border-blue-600:focus {
+    border-color: var(--eve-accent) !important;
+  }
+
+  /* Sidebar Active notched tab style adaptation */
+  .sidebar-active-tab {
+    background-color: var(--eve-bg) !important;
+    color: var(--eve-accent) !important;
+  }
+  .sidebar-active-tab::before {
+    box-shadow: 10px 10px 0 10px var(--eve-bg) !important;
+  }
+  .sidebar-active-tab::after {
+    box-shadow: 10px -10px 0 10px var(--eve-bg) !important;
+  }
+
+  /* Left sidebar bg in Admin Panel */
+  .admin-dashboard-root div.bg-slate-900 {
+    background-color: var(--eve-surface) !important;
+    border-right: 1px solid var(--eve-border) !important;
+  }
+
+  /* Sidebar items hovers */
+  .hover\:bg-slate-800:hover {
+    background-color: var(--eve-surface-card) !important;
+  }
+
+  /* Active row list highlights */
+  .active-row-highlight {
+    background-color: var(--eve-accent) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px var(--eve-shadow) !important;
+  }
+
+  .table-row-interactive:hover:not(.active-row-highlight) {
+    background-color: var(--eve-surface-card);
+  }
+
+  /* Buttons with secondary styles */
+  button.bg-white, button.bg-slate-50 {
+    background-color: var(--eve-surface-card) !important;
+    color: var(--eve-text) !important;
+    border-color: var(--eve-border) !important;
+  }
+  button.bg-white:hover, button.bg-slate-50:hover {
+    background-color: var(--eve-surface) !important;
+  }
+
+  /* Cyber Glow shadows */
+  .glow-accent {
+    box-shadow: 0 0 15px var(--eve-shadow) !important;
+  }
+
+  /* Ensure SVG icons override color rules if using stroke-current/fill-current */
+  .text-blue-600 svg {
+    stroke: var(--eve-accent) !important;
+  }
 }
 
 /* Custom styles for high-end scrollbars inside the phone preview */
