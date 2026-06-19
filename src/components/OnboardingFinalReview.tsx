@@ -101,7 +101,7 @@ export const OnboardingFinalReview: React.FC<FinalReviewProps> = ({
         <div className="grid grid-cols-2 gap-3 text-xs">
           <div className="col-span-2">
             <span className="text-slate-400 block text-[8px] font-bold uppercase tracking-wider">Full Name</span>
-            <span className="font-semibold text-slate-800 break-words">{data.fullName || 'Sarah Jenkins'}</span>
+            <span className="font-semibold text-slate-800 break-words">{data.fullName || 'Not specified'}</span>
           </div>
 
           <div>
@@ -110,16 +110,16 @@ export const OnboardingFinalReview: React.FC<FinalReviewProps> = ({
           </div>
           <div>
             <span className="text-slate-400 block text-[8px] font-bold uppercase tracking-wider">Highest Degree</span>
-            <span className="font-semibold text-slate-800 capitalize">{data.educationLevel?.replace('-', ' ') || 'Undergraduate'}</span>
+            <span className="font-semibold text-slate-800 capitalize">{data.educationLevel?.replace('-', ' ') || 'Not specified'}</span>
           </div>
 
           <div>
             <span className="text-slate-400 block text-[8px] font-bold uppercase tracking-wider">Field of Study</span>
-            <span className="font-semibold text-slate-800 break-words">{data.fieldOfStudy || 'Computer Science'}</span>
+            <span className="font-semibold text-slate-800 break-words">{data.fieldOfStudy || 'Not specified'}</span>
           </div>
           <div>
             <span className="text-slate-400 block text-[8px] font-bold uppercase tracking-wider">Institution</span>
-            <span className="font-semibold text-slate-800 break-words">{data.institution || 'Stanford University'}</span>
+            <span className="font-semibold text-slate-800 break-words">{data.institution || 'Not specified'}</span>
           </div>
         </div>
 
